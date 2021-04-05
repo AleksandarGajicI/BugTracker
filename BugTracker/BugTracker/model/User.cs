@@ -8,7 +8,8 @@ namespace BugTracker.model
 {
     public class User
     {
-        public int UserId { get; set; }
+        [Key]
+        public Guid Id { get; set; }
 
         [Required]
         public string Email { get; set; }
