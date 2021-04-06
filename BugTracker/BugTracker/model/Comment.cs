@@ -6,21 +6,18 @@ using System.Threading.Tasks;
 
 namespace BugTracker.model
 {
-    public class UserAssignedRequest
+    public class Comment
     {
         [Key]
         public Guid Id { get; set; }
         [Required]
-        public DateTime RequestSent { get; set; }
-        [Required]
-        public bool Accepted { get;     set; }
-        [MaxLength(200)]
+        public DateTime Created { get; set; }
+        [MaxLength(350)]
         public string Message { get; set; }
         [Required]
-        public Project Project { get; set; }
+        public User Commenter { get; set; }
+
         [Required]
-        public User UserAssigned { get; set; }
-        [Required]
-        public Role Role { get; set; }
+        public Ticket Ticket { get; set; }
     }
 }
