@@ -18,9 +18,13 @@ namespace BugTracker.model
 
         public  DateTime Joined { get; set; }
 
-        public List<Project> Projects { get; set; }
 
-        public List<UserAssignedRequest> Requests { get; set; }
+
+
+
+        public ICollection<ProjectUserReq> RequestsSent { get; set; }
+
+        public ICollection<ProjectUserReq> RequestsReceived { get; set; }
 
 
     }

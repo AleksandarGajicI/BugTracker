@@ -9,13 +9,13 @@ namespace BugTracker.repositories.project
     public interface IProjectRepository
     {
         List<Project> GetAllProjects();
-        Project FindProjectById(int id);
+        Project FindProjectById(Guid id);
 
-        List<Project> FindProjectForOwner(int ownerId);
+        List<Project> FindProjectForOwner(Guid ownerId);
 
         void AddProject(Project project);
 
-        void DeleteProject(int id);
+        void DeleteProject(Guid id);
 
         void UpdateProject(Project project);
     }

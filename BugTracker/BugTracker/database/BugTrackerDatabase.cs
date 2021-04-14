@@ -1,4 +1,6 @@
 ﻿using BugTracker.database.config;
+using BugTracker.database.config.relationship;
+using BugTracker.database.config.ticket;
 using BugTracker.model;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,12 +18,24 @@ namespace BugTracker.database
         {
             base.OnModelCreating(modelBuilder);
 
-            UserDbConfig.ConfigureUserTable(modelBuilder);
-            ProjectDbConfig.ConfigureProjectTable(modelBuilder);
+            var configClasses = typeof(BugTrackerDatabase).Assembly.ExportedTypes
+                .Where(x => typeof(IConfigDB).IsAssignableFrom(x) &&!x.IsInterface && !x.IsAbstract)
+                .Select(Activator.CreateInstance).Cast<IConfigDB>().ToList();
+
+            configClasses.ForEach(config => config.ConfigureDB(modelBuilder));
+
+            RelationshipsDbConfig.ConfigureRealtionships(modelBuilder);
+
         }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<User> Users { get; set; }
 
-        public DbSet<Project> Project { get; set;}
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<ProjectUserReq> ProjectUserRequests { get; set; }
+
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketHistory> TicketHistory { get; set; }
+
     }
 }

@@ -9,27 +9,26 @@ namespace BugTracker.repositories
 {
     public class ProjectRepository : IProjectRepository
     {
-        private Dictionary<int, Project> Projects = new Dictionary<int, Project>();
+        private Dictionary<Guid, Project> Projects = new Dictionary<Guid, Project>();
 
         public void AddProject(Project project)
         {
-            Projects.Add(project.ProjectId, project);
+            Projects.Add(project.Id, project);
         }
 
-        public void DeleteProject(int id)
+        public void DeleteProject(Guid id)
         {
-            Projects.Remove(id);
+            return;
         }
 
-        public Project FindProjectById(int id)
+        public Project FindProjectById(Guid id)
         {
-            return Projects.ContainsKey(id) ? Projects[id] : null;
+            return null;
         }
 
-        public List<Project> FindProjectForOwner(int ownerId)
+        public List<Project> FindProjectForOwner(Guid ownerId)
         {
-            return Projects.Where(d => d.Value.owner.UserId == ownerId)
-                 .Select(d => d.Value).ToList();
+            return null;
         }
 
         public List<Project> GetAllProjects()
@@ -39,7 +38,7 @@ namespace BugTracker.repositories
 
         public void UpdateProject(Project project)
         {
-            Projects[project.ProjectId] = project;
+            return;
         }
     }
 }

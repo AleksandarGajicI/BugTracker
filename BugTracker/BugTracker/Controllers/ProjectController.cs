@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BugTracker.model;
 using BugTracker.repositories.project;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace BugTracker.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProject(int id) 
+        public IActionResult DeleteProject(Guid id) 
         {
             if (projectRepository.FindProjectById(id) is null) 
             {

@@ -8,16 +8,13 @@ namespace BugTracker.model
 {
     public class Comment
     {
-        [Key]
         public Guid Id { get; set; }
-        [Required]
         public DateTime Created { get; set; }
-        [MaxLength(350)]
         public string Message { get; set; }
-        [Required]
-        public User Commenter { get; set; }
 
-        [Required]
+        public ProjectUserReq Commenter { get; set; }
+
+        public Guid TicketId { get; set; }
         public Ticket Ticket { get; set; }
     }
 }

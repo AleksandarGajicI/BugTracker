@@ -13,8 +13,15 @@ namespace BugTracker.model
         public string Description { get; set; }
         public DateTime Deadline { get; set; }
         public bool Closed { get; set; }
-        [Required]
-        public User Owner { get; set; }
+
+
+
+
+
+
+        public ICollection<ProjectUserReq> ProjectUsersReq { get; set; }
+
+        public ICollection<Ticket> Tickets { get; set; }
 
 
     }

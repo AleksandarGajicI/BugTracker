@@ -7,26 +7,30 @@ using System.Threading.Tasks;
 
 namespace BugTracker.database.config
 {
-    public class ProjectDbConfig
+    public class ProjectDbConfig : IConfigDB
     {
-        public static void ConfigureProjectTable(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<Project>()
-                .HasKey(p => p.Id);
 
-            modelBuilder.Entity<Project>()
+        public void ConfigureDB(ModelBuilder modelBuilder)
+        {
+            var project = modelBuilder.Entity<Project>();
+
+            project
+               .HasKey(p => p.Id);
+
+            project
                 .Property(p => p.Name)
                 .IsRequired()
                 .HasMaxLength(200);
 
-            modelBuilder.Entity<Project>()
+            project
                 .Property(p => p.Description)
                 .HasMaxLength(350);
 
-            modelBuilder.Entity<Project>()
+            project
                 .Property(p => p.Deadline)
                 .IsRequired();
 
-            modelBuilder.Entity<Project>()
+            project
                 .Property(p => p.Closed)
                 .IsRequired()
                 .HasDefaultValue(false);
