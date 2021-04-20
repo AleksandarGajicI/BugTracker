@@ -1,4 +1,7 @@
-﻿using BugTracker.model;
+﻿using BugTracker.database;
+using BugTracker.infrastructure.repository;
+using BugTracker.infrastructure.unitOfWork;
+using BugTracker.model;
 using BugTracker.repositories.project;
 using System;
 using System.Collections.Generic;
@@ -7,38 +10,16 @@ using System.Threading.Tasks;
 
 namespace BugTracker.repositories
 {
-    public class ProjectRepository : IProjectRepository
+    public class ProjectRepository : GenericRepository<Project>,  IProjectRepository
     {
-        private Dictionary<Guid, Project> Projects = new Dictionary<Guid, Project>();
-
-        public void AddProject(Project project)
-        {
-            Projects.Add(project.Id, project);
+        public ProjectRepository(BugTrackerDatabase context, IUnitOfWork uow) :
+            base(context, uow)
+        { 
         }
 
-        public void DeleteProject(Guid id)
+        public IEnumerable<Project> findProjectWithDeadlineBefore(DateTime deadline)
         {
-            return;
-        }
-
-        public Project FindProjectById(Guid id)
-        {
-            return null;
-        }
-
-        public List<Project> FindProjectForOwner(Guid ownerId)
-        {
-            return null;
-        }
-
-        public List<Project> GetAllProjects()
-        {
-            return Projects.Select(d => d.Value).ToList();
-        }
-
-        public void UpdateProject(Project project)
-        {
-            return;
+            return _table.Where(p => p.Deadline == deadline).ToList();
         }
     }
 }

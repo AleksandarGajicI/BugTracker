@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BugTracker.infrastructure.domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.model
 {
-    public class Project
+    public class Project : EntityBase
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -23,6 +24,9 @@ namespace BugTracker.model
 
         public ICollection<Ticket> Tickets { get; set; }
 
-
+        protected override void Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
