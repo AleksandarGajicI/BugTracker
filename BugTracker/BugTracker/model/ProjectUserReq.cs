@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BugTracker.infrastructure.domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.model
 {
-    public class ProjectUserReq
+    public class ProjectUserReq : EntityBase
     {
         public Guid Id { get; set; }
         public DateTime RequestSent { get; set; }
@@ -29,5 +30,10 @@ namespace BugTracker.model
         public User Sender { get; set; }
 
         public ICollection<ProjectUserForTicket> AssignedForTicket { get; set; }
+
+        protected override void Validate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
