@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.domain.events
 {
-    interface IDomainEventHandlerFactory
+    public interface IDomainEventHandlerFactory
     {
         public IEnumerable<IDomainEventHandler<T>> GetDomainEventHandlersFor<T>(T domainEvent)
             where T : IDomainEvent<EntityBase>;
