@@ -1,19 +1,17 @@
-    using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BugTracker.database;
+using BugTracker.infrastructure.unitOfWork;
 using BugTracker.repositories;
 using BugTracker.repositories.project;
+using BugTracker.repositories.user;
+using BugTracker.services.user;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace BugTracker
 {
@@ -34,7 +32,10 @@ namespace BugTracker
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
             services.AddControllers();
-            services.AddSingleton<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IUnitOfWork, BugTrackerUnitOfWork>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
