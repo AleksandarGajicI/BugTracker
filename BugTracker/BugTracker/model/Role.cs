@@ -10,6 +10,12 @@ namespace BugTracker.model
         public string RoleName { get; set; }
         public string Description { get; set; }
 
+        public Role(string roleName, string description)
+        {
+            RoleName = roleName;
+            Description = description;
+        }
+
         public override string ToString()
         {
             return $"Role:" +

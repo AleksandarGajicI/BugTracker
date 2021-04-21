@@ -19,7 +19,22 @@ namespace BugTracker.model
 
         public  DateTime Joined { get; set; }
 
+        public User()
+        {
+            RequestsSent = new List<ProjectUserReq>();
+            RequestsReceived = new List<ProjectUserReq>();
+        }
 
+        public User(string email, string userName, string firstName, string lastName)
+            : this()
+        {
+            Id = Guid.NewGuid();
+            Email = email;
+            UserName = userName;
+            FirstName = firstName;
+            LastName = lastName;
+            Joined = DateTime.Now;
+        }
 
 
 

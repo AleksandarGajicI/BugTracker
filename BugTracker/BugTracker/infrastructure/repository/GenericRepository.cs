@@ -38,17 +38,17 @@ namespace BugTracker.infrastructure.repository
             _context.Update((T)entity);
         }
 
-        public void save(T entity)
+        public void Save(T entity)
         {
             _uow.RegisterCreated(entity, this);
         }
 
-        public void update(T entity)
+        public void Update(T entity)
         {
             _uow.RegisterUpdated(entity, this);
         }
 
-        public void delete(Guid id)
+        public void Delete(Guid id)
         {
             _uow.RegisterDeleted(_table.Find(id), this);
         }

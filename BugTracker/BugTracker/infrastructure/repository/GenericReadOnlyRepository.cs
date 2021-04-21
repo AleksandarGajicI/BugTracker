@@ -21,19 +21,19 @@ namespace BugTracker.infrastructure.repository
             _table = context.Set<T>();
         }
 
-        public IEnumerable<T> findAll()
+        public IEnumerable<T> FindAll()
         {
             return _table.ToList();
         }
 
-        public IEnumerable<T> findWithPaging(IQueryable<T> query, int pageNum, int pageSize)
+        public IEnumerable<T> FindWithPaging(IQueryable<T> query, int pageNum, int pageSize)
         {
             return query.Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
         }
 
-        public T getById(Guid id)
+        public T FindById(Guid id)
         {
             return _table.Find(id);
         }

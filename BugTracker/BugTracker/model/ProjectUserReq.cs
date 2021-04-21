@@ -14,6 +14,20 @@ namespace BugTracker.model
         public bool Accepted { get;     set; }
         public string Message { get; set; }
 
+        public ProjectUserReq(string message,
+                                User userAssigned,
+                                Role role,
+                                Project project,
+                                bool accepted = false)
+        {
+            RequestSent = DateTime.Now;
+            Message = message;
+            UserAssigned = userAssigned;
+            Role = role;
+            Project = project;
+            Accepted = accepted;
+            AssignedForTicket = new List<ProjectUserForTicket>();
+        }
 
 
 

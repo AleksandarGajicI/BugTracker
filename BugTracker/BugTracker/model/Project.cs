@@ -15,8 +15,21 @@ namespace BugTracker.model
         public DateTime Deadline { get; set; }
         public bool Closed { get; set; }
 
+        public Project()
+        {
+            ProjectUsersReq = new List<ProjectUserReq>();
+            Tickets = new List<Ticket>();
+        }
 
-
+        public Project(string name, string description, DateTime deadline, bool closed = false)
+            : this()
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Description = description;
+            Deadline = deadline;
+            Closed = closed;
+        }
 
 
 
@@ -44,6 +57,32 @@ namespace BugTracker.model
         protected override void Validate()
         {
             throw new NotImplementedException();
+        }
+
+        public void AddTicket(Ticket ticket)
+        {
+            if (ticket.Project is null)
+            {
+                ticket.Project = this;
+            }
+
+            if (!Tickets.Contains(ticket))
+            {
+                Tickets.Add(ticket);
+            }
+        }
+
+        public void AddUserToProject(ProjectUserReq user)
+        {
+            if (user.Project is null)
+            {
+                user.Project = this;
+            }
+
+            if (!ProjectUsersReq.Contains(user))
+            {
+                ProjectUsersReq.Add(user);
+            }
         }
     }
 }

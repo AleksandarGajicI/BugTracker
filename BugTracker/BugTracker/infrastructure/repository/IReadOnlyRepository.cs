@@ -8,8 +8,8 @@ namespace BugTracker.repositories
 {
     public interface IReadOnlyRepository<T> where T : EntityBase
     {
-        public T getById(Guid id);
-        public IEnumerable<T> findAll();
-        public IEnumerable<T> findWithPaging(IQueryable<T> query, int pageNum, int pageSize);
+        public T FindById(Guid id);
+        public IEnumerable<T> FindAll();
+        public IEnumerable<T> FindWithPaging(IQueryable<T> query, int pageNum, int pageSize);
     }
 }

@@ -20,14 +20,13 @@ namespace BugTracker.Controllers
         [HttpGet]
         public IEnumerable<Project> GetProjects() 
         {
-            return projectRepository.GetAllProjects();
+            return projectRepository.FindAll();
         }
 
         [HttpPost]
         public IActionResult AddProject([FromBody] Project project) 
         {
-
-            projectRepository.AddProject(project);
+            projectRepository.Save(project);
 
             return Ok();
         }
@@ -35,12 +34,12 @@ namespace BugTracker.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteProject(Guid id) 
         {
-            if (projectRepository.FindProjectById(id) is null) 
+            if (projectRepository.FindById(id) is null) 
             {
                 return NotFound();
             }
 
-            projectRepository.DeleteProject(id);
+            projectRepository.Delete(id);
             return Ok();
         }
     }

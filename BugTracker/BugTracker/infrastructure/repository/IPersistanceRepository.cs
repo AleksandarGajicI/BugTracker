@@ -9,8 +9,8 @@ namespace BugTracker.repositories.generic
     public interface IPersistanceRepository<T>
         where T : EntityBase
     {
-        public void save(T entity);
-        public void update(T entity);
-        public void delete(Guid id);
+        public void Save(T entity);
+        public void Update(T entity);
+        public void Delete(Guid id);
     }
 }
