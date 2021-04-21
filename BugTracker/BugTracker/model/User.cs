@@ -27,6 +27,17 @@ namespace BugTracker.model
 
         public ICollection<ProjectUserReq> RequestsReceived { get; set; }
 
+        public override string ToString()
+        {
+            return $"User: " +
+                    $"Id: {Id}," +
+                    $" UserName: {UserName}," +
+                    $" Email: {Email}," +
+                    $" FirstName: {FirstName}," +
+                    $" LastName: {LastName}," +
+                    $" Joined: {Joined}";
+        }
+
         protected override void Validate()
         {
             throw new NotImplementedException();

@@ -24,6 +24,8 @@ namespace BugTracker.infrastructure.domain
             _brokenRules.Add(brokenRule);
         }
 
+        public abstract override string ToString();
+
 
     }
 }

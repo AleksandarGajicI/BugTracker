@@ -24,6 +24,23 @@ namespace BugTracker.model
 
         public ICollection<Ticket> Tickets { get; set; }
 
+        public override string ToString()
+        {
+            var owner = ProjectUsersReq?.Where(x => x.Role?.RoleName == "PROJECT_MANAGER")
+                                        .OrderBy(x => x.RequestSent)
+                                        .Select(x => x.UserAssigned)
+                                        .FirstOrDefault();
+
+            return $"Project:" +
+                    $" Id: {Id}," +
+                    $" Name: {Name}," +
+                    $" Description: {Description}," +
+                    $" Deadline: {Deadline}," +
+                    $" Closed: {Closed}," +
+                    $" OwnerId: {owner.Id}," +
+                    $" OwnerUserName: {owner.UserName}";
+        }
+
         protected override void Validate()
         {
             throw new NotImplementedException();

@@ -10,6 +10,14 @@ namespace BugTracker.model
         public string RoleName { get; set; }
         public string Description { get; set; }
 
+        public override string ToString()
+        {
+            return $"Role:" +
+                    $" Id: {Id}," +
+                    $" RoleName: {RoleName}," +
+                    $" Description: {Description}";
+        }
+
         protected override void Validate()
         {
             throw new NotImplementedException();

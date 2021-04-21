@@ -31,6 +31,19 @@ namespace BugTracker.model
 
         public ICollection<ProjectUserForTicket> AssignedForTicket { get; set; }
 
+        public override string ToString()
+        {
+            return $"ProjectUserReq:" +
+                    $" Id: {Id}," +
+                    $" RequestSent: {RequestSent}," +
+                    $" Accepted: {Accepted}," +
+                    $" Message: {Message}," +
+                    $" Sender: {Sender?.UserName}," +
+                    $" User: {UserAssigned?.UserName}" +
+                    $" Project: {Project?.Name}" +
+                    $" Role: {Role?.RoleName}";
+        }
+
         protected override void Validate()
         {
             throw new NotImplementedException();
