@@ -24,7 +24,7 @@ namespace BugTracker.model
                     $" Description: {Description}";
         }
 
-        protected override void Validate()
+        public override void Validate()
         {
             throw new NotImplementedException();
         }

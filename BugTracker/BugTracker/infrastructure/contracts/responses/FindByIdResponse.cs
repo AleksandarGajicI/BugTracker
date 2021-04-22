@@ -9,7 +9,7 @@ namespace BugTracker.infrastructure.contracts.responses
     public class FindByIdResponse<T> : BaseResponse 
         where T : EntityBase
     {
-        public T Entity { get; set; };
+        public T Entity { get; set; }
 
         public FindByIdResponse()
             : base()

@@ -63,7 +63,7 @@ namespace BugTracker.model
                     $" Role: {Role?.RoleName}";
         }
 
-        protected override void Validate()
+        public override void Validate()
         {
             throw new NotImplementedException();
         }

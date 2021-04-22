@@ -54,7 +54,7 @@ namespace BugTracker.model
                     $" OwnerUserName: {owner.UserName}";
         }
 
-        protected override void Validate()
+        public override void Validate()
         {
             throw new NotImplementedException();
         }

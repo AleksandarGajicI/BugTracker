@@ -10,9 +10,9 @@ namespace BugTracker.infrastructure.domain
     {
         private IList<BusinessRule> _brokenRules = new List<BusinessRule>();
 
-        protected abstract void Validate();
+        public abstract void Validate();
 
-        protected IList<BusinessRule> GetBrokenRules()
+        public IList<BusinessRule> GetBrokenRules()
         {
             _brokenRules.Clear();
             Validate();
