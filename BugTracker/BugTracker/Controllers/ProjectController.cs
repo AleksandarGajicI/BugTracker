@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using BugTracker.contracts.requests.project;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.model;
 using BugTracker.repositories.project;
+using BugTracker.services.project;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracker.Controllers
@@ -10,36 +13,31 @@ namespace BugTracker.Controllers
     [ApiController]
     public class ProjectController : ControllerBase
     {
-        private readonly IProjectRepository projectRepository;
+        private readonly IProjectService _projectService;
 
-        public ProjectController(IProjectRepository projectRepository)
+        public ProjectController(IProjectService projectService)
         {
-            this.projectRepository = projectRepository;
+            _projectService = projectService;
         }
 
         [HttpGet]
         public IEnumerable<Project> GetProjects() 
         {
-            return projectRepository.FindAll();
+            return null;
         }
 
         [HttpPost]
-        public IActionResult AddProject([FromBody] Project project) 
+        public IActionResult AddProject([FromBody] CreateProjectRequest project) 
         {
-            projectRepository.Save(project);
+            _projectService.Create(project);
 
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteProject(Guid id) 
+        public IActionResult DeleteProject(DeleteRequest req) 
         {
-            if (projectRepository.FindById(id) is null) 
-            {
-                return NotFound();
-            }
-
-            projectRepository.Delete(id);
+            _projectService.Delete(req);
             return Ok();
         }
     }

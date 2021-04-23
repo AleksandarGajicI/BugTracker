@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BugTracker.contracts;
-using BugTracker.contracts.response.user;
 using BugTracker.infrastructure.contracts.requests;
-using BugTracker.repositories.user;
 using BugTracker.services.user;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracker.Controllers
@@ -29,7 +26,7 @@ namespace BugTracker.Controllers
         {
             var res = _userService.FindAll();
 
-            if (res.FoundEntities is null || res.FoundEntities.Count == 0)
+            if (res.FoundEntitiesDTO is null || res.FoundEntitiesDTO.Count == 0)
             {
                 return NotFound();
             }
@@ -40,7 +37,6 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Users.GetById)]
         public IActionResult GetUserById(FindByIdRequest req)
         {
-
             var res = _userService.FindById(req);
 
             if (res.Errors is null || res.Errors.Count > 0)

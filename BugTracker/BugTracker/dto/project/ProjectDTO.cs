@@ -17,5 +17,13 @@ namespace BugTracker.dto
         ICollection<Ticket> RecentTickets { get; set; }
         public int NumOfTickets { get; set; }
 
+        public ProjectDTO() 
+        {
+            UsersOnProject = new List<ProjectUserDTO>();
+            PendingRequests = new List<ProjectUserRequestDTO>();
+            DeniedRequests = new List<ProjectUserRequestDTO>();
+            RecentTickets = new List<Ticket>();
+        }
+
     }
 }
