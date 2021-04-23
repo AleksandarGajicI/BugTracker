@@ -1,4 +1,5 @@
-﻿using BugTracker.contracts.response.user;
+﻿using BugTracker.contracts.requests.user;
+using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.services;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.services.user
 {
-    public interface IUserService : IService<User>
+    public interface IUserService : IService<UserDTO, CreateUserRequest, UpdateUserRequest>
     {
     }
 }

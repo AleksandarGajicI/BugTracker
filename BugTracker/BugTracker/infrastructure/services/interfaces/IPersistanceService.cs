@@ -1,4 +1,5 @@
-﻿using BugTracker.infrastructure.contracts.requests;
+﻿using BugTracker.dto;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.domain;
 using System;
@@ -8,11 +9,13 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.services
 {
-    public interface IPersistanceService<T>
-        where T : EntityBase
+    public interface IPersistanceService<T, TCreate, TUpdate>
+        where T : BaseDTO 
+        where TCreate : BaseRequest
+        where TUpdate : BaseRequest
     {
-        public CreateResponse<T> Create(CreateRequest<T> req);
+        public CreateResponse<T> Create(TCreate req);
         public DeleteResponse Delete(DeleteRequest req);
-        public UpdateResponse<T> Update(UpdateRequest<T> req);
+        public UpdateResponse<T> Update(TUpdate req);
     }
 }

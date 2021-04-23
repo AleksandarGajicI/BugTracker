@@ -1,4 +1,6 @@
-﻿using BugTracker.database;
+﻿using BugTracker.contracts.requests.user;
+using BugTracker.database;
+using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.repository;
@@ -12,15 +14,34 @@ using System.Threading.Tasks;
 
 namespace BugTracker.services.user
 {
-    public class UserService : GenericService<User>, IUserService
+    public class UserService : IUserService
     {
-        public UserService(BugTrackerDatabase context, IUnitOfWork uow)
-            : base(new GenericRepository<User>(context, uow)
-                  , uow)
-        { 
+        public CreateResponse<UserDTO> Create(CreateUserRequest req)
+        {
+            throw new NotImplementedException();
         }
 
-        public override UpdateResponse<User> Update(UpdateRequest<User> req)
+        public DeleteResponse Delete(DeleteRequest req)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FindAllResponse<UserDTO> FindAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public FindByIdResponse<UserDTO> FindById(FindByIdRequest req)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FindPageResponse<UserDTO> FindPage(FindPageRequest req)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UpdateResponse<UserDTO> Update(UpdateUserRequest req)
         {
             throw new NotImplementedException();
         }

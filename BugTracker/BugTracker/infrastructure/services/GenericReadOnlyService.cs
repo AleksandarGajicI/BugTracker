@@ -1,4 +1,5 @@
-﻿using BugTracker.infrastructure.contracts.requests;
+﻿using BugTracker.dto;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.domain;
 using BugTracker.infrastructure.repository;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.services
 {
-    public class GenericReadOnlyService<T> : IReadOnlyService<T>
-        where T : EntityBase
+    public class GenericReadOnlyService<T, TEntity> : IReadOnlyService<T>
+        where T : BaseDTO where TEntity : EntityBase
     {
-        protected readonly GenericReadOnlyRepository<T> _repository;
+        protected readonly GenericReadOnlyRepository<TEntity> _repository;
 
-        public GenericReadOnlyService(GenericReadOnlyRepository<T> repository)
+        public GenericReadOnlyService(GenericReadOnlyRepository<TEntity> repository)
         {
             _repository = repository;
         }
@@ -27,7 +28,8 @@ namespace BugTracker.infrastructure.services
             {
                 Errors = new List<string>(),
                 Success = true,
-                FoundEntities = entities.ToList().AsReadOnly()
+                //need to map entity to dto!
+                //FoundEntitiesDTO = entities.ToList().AsReadOnly()
             };
 
             return res;
@@ -47,7 +49,8 @@ namespace BugTracker.infrastructure.services
             }
 
             res.Success = true;
-            res.Entity = user;
+            //map entity to dto!
+            //res.Entity = user;
 
             return res;
         }
