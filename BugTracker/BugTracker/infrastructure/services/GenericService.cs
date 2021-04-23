@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.services
 {
-    public abstract class GenericService<T, TEntity, TCreate, TUpdate> : GenericReadOnlyService<T, TEntity>, IPersistanceService<T, TCreate, TUpdate>
-        where T : BaseDTO 
+    public abstract class GenericService<T, TById, TEntity, TCreate, TUpdate> : GenericReadOnlyService<T, TById, TEntity>, IPersistanceService<T, TCreate, TUpdate>
+        where T : BaseDTO
+        where TById : BaseDTO
         where TEntity : EntityBase
         where TCreate : BaseRequest
         where TUpdate : BaseRequest

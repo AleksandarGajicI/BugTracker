@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.services
 {
-    public class GenericReadOnlyService<T, TEntity> : IReadOnlyService<T>
-        where T : BaseDTO where TEntity : EntityBase
+    public class GenericReadOnlyService<T, TById, TEntity> : IReadOnlyService<T, TById>
+        where T : BaseDTO
+        where TById : BaseDTO
+        where TEntity : EntityBase
     {
         protected readonly GenericReadOnlyRepository<TEntity> _repository;
 
@@ -35,9 +37,9 @@ namespace BugTracker.infrastructure.services
             return res;
         }
 
-        public FindByIdResponse<T> FindById(FindByIdRequest req)
+        public FindByIdResponse<TById> FindById(FindByIdRequest req)
         {
-            var res = new FindByIdResponse<T>();
+            var res = new FindByIdResponse<TById>();
 
             var user = _repository.FindById(req.Id);
 

@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.services
 {
-    public interface IReadOnlyService<T>
+    public interface IReadOnlyService<T, TById>
         where T : BaseDTO
+        where TById : BaseDTO
     {
         public FindAllResponse<T> FindAll();
-        public FindByIdResponse<T> FindById(FindByIdRequest req);
+        public FindByIdResponse<TById> FindById(FindByIdRequest req);
         public FindPageResponse<T> FindPage(FindPageRequest req);
     }
 }
