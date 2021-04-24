@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace BugTracker.services.user
 {
-    public interface IUserService : IService<UserDTO, UserDTO, CreateUserRequest, UpdateUserRequest>
+    public interface IUserService : IService<UserDTO, UserDTO, RegisterUserRequest, UpdateUserRequest>
     {
+        public BaseResponse Logout(LogoutRequest req);
     }
 }

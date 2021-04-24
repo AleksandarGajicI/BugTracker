@@ -17,7 +17,7 @@ namespace BugTracker.contracts
         {
             public const string GetAll = Base + "/users";
             public const string GetById = Base + "/users/{id}";
-            public const string Create = Base + "/users";
+            public const string Register = Base + "/register";
             public const string Update = Base + "/users";
             public const string Delete = Base + "/users";
         }

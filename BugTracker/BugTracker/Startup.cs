@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using BugTracker.database;
+using BugTracker.auth.database;
+using BugTracker.auth.domain;
+using BugTracker.auth.service;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.repositories;
 using BugTracker.repositories.project;
@@ -31,11 +34,21 @@ namespace BugTracker
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
+            services.AddDbContext<BugTrackerIdentityDatabase>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("Identity"));
+            });
+            services.AddIdentity<UserAuth, UserRole>()
+                .AddEntityFrameworkStores<BugTrackerIdentityDatabase>();
+
             services.AddControllers();
+
             services.AddScoped<IUnitOfWork, BugTrackerUnitOfWork>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+
             services.AddAutoMapper(typeof(Startup));
         }
 

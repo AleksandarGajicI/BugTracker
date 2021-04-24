@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.model.domainServices
 {
-    interface IProjectDomainService
+    public interface IProjectDomainService
     {
         public Project CreateProject(User owner, string projectName, string description, DateTime deadline, Role role);
 

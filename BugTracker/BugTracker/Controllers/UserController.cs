@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BugTracker.contracts;
+using BugTracker.contracts.requests.user;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.user;
 using Microsoft.AspNetCore.Mvc;
@@ -45,6 +46,13 @@ namespace BugTracker.Controllers
             }
 
             return Ok(res);
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.Users.Register)]
+        public IActionResult Register([FromBody] RegisterUserRequest req)
+        {
+            return null;
         }
     }
 }
