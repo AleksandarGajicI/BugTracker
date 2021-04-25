@@ -55,7 +55,25 @@ namespace BugTracker.model
 
         public override void Validate()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(Email) || Email == " ")
+            {
+                AddBrokenRule(new BusinessRule("Email", "Invalid Email!"));
+            }
+
+            if (string.IsNullOrEmpty(UserName) || UserName == " ")
+            {
+                AddBrokenRule(new BusinessRule("UserName", "Invalid UserName!"));
+            }
+
+            if (string.IsNullOrEmpty(FirstName) || FirstName == " ")
+            {
+                AddBrokenRule(new BusinessRule("FirstName", "Invalid FirstName!"));
+            }
+
+            if (string.IsNullOrEmpty(LastName) || LastName == " ")
+            {
+                AddBrokenRule(new BusinessRule("LastName", "Invalid LastName!"));
+            }
         }
     }
 }

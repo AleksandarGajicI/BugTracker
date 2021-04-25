@@ -50,7 +50,7 @@ namespace BugTracker.services.user
                 }
             }
 
-            var userExists = _authService.FindByEmailOrUserName(req.Email, req.UserName).Result;
+            var userExists = _authService.FindByEmailOrUserName(req.Email, req.UserName).GetAwaiter().GetResult();
 
             if (userExists)
             {
@@ -86,6 +86,7 @@ namespace BugTracker.services.user
             
             res.Success = true;
             res.BugTrackerToken = token;
+            res.EntityDTO = _mapper.Map<User, UserDTO>(user);
 
             return res;
         }

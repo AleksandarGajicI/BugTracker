@@ -52,7 +52,14 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Users.Register)]
         public IActionResult Register([FromBody] RegisterUserRequest req)
         {
-            return null;
+            var res = _userService.Create(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
         }
     }
 }

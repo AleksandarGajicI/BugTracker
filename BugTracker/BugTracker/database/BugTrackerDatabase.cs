@@ -12,7 +12,7 @@ namespace BugTracker.database
 {
     public class BugTrackerDatabase : DbContext
     {
-        public BugTrackerDatabase(DbContextOptions options) : base(options){ }
+        public BugTrackerDatabase(DbContextOptions<BugTrackerDatabase> options) : base(options){ }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

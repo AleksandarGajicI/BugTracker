@@ -30,20 +30,27 @@ namespace BugTracker.infrastructure.unitOfWork
             {
                 foreach (var created in createdEntities.Keys)
                 {
+                    Console.WriteLine("saving");
+                    Console.WriteLine("Db context: " + _bugTrackerDbContext);
                     createdEntities[created].PersistCreationOf(created);
                 }
 
                 foreach (var updated in updatedEntities.Keys)
                 {
+                    Console.WriteLine("updating");
                     updatedEntities[updated].PersistCreationOf(updated);
                 }
 
                 foreach (var deleted in deletedEntities.Keys)
                 {
+                    Console.WriteLine("deleting");
                     deletedEntities[deleted].PersistCreationOf(deleted);
                 }
 
+                Console.WriteLine("calling saving changes");
+
                 _bugTrackerDbContext.SaveChanges();
+                transaction.Commit();
 
             }
         }

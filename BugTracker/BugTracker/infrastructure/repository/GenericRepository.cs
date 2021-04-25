@@ -25,16 +25,20 @@ namespace BugTracker.infrastructure.repository
 
         public void PersistCreationOf(EntityBase entity)
         {
-            _context.Add((T)entity);
+            Console.WriteLine("adding to database " + entity.GetType().Name);
+            //_context.Add((T)entity);
+            _table.Add((T)entity);
         }
 
         public void PersistDeletionOf(EntityBase entity)
         {
+            Console.WriteLine("deleting from database " + entity.GetType().Name);
             _context.Remove((T)entity);
         }
 
         public void PersistUpdateOf(EntityBase entity)
         {
+            Console.WriteLine("updating to database " + entity.GetType().Name);
             _context.Update((T)entity);
         }
 
