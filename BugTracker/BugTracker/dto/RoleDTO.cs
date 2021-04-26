@@ -9,6 +9,6 @@ namespace BugTracker.dto
     {
         public string RoleName { get; set; }
         public string Description { get; set; }
-        public Guid Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid Id { get; set; }
     }
 }

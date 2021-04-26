@@ -21,5 +21,11 @@ namespace BugTracker.contracts
             public const string Update = Base + "/users";
             public const string Delete = Base + "/users";
         }
+
+        public static class Roles
+        { 
+            public const string GetAll = Base + "/roles";
+            public const string GetById = Base + "/roles/id/";
+        }
     }
 }

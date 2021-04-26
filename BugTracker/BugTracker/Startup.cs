@@ -20,6 +20,8 @@ using Microsoft.IdentityModel.Tokens;
 using BugTracker.auth;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using BugTracker.services.role;
+using BugTracker.repositories.role;
 
 namespace BugTracker
 {
@@ -75,8 +77,10 @@ namespace BugTracker
             services.AddScoped<IUnitOfWork, BugTrackerUnitOfWork>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddAutoMapper(typeof(Startup));
         }
