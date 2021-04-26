@@ -61,5 +61,19 @@ namespace BugTracker.Controllers
 
             return Ok(res);
         }
+
+        [HttpDelete]
+        [Route(ApiRoutes.Users.Delete)]
+        public IActionResult Delete([FromBody] DeleteRequest req)
+        {
+            var res = _userService.Delete(req);
+
+            if (!res.Success)
+            {
+                return NotFound(res);
+            }
+
+            return Ok(res);
+        }
     }
 }

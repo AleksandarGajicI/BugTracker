@@ -94,15 +94,25 @@ namespace BugTracker.services.user
         public DeleteResponse Delete(DeleteRequest req)
         {
             var res = new DeleteResponse();
+
+            var user = _userRepository.FindById(req.Id);
+
+            if (user == null)
+            {
+                return (DeleteResponse)ReturnFailureResponseWith(res, "User not found!");
+            }
+
             try
             {
                 _userRepository.Delete(req.Id);
                 _uow.Commit();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return (DeleteResponse)ReturnFailureResponseWith(res, e.Message);
+                return (DeleteResponse)ReturnFailureResponseWith(res, ex.Message);
             }
+
+            _authService.DeleteUser(user.UserName);
 
             res.Success = true;
             res.IdDeleted = req.Id;
