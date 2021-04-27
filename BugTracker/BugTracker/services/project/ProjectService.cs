@@ -59,6 +59,7 @@ namespace BugTracker.services.project
             }
 
             //map Project to ProjectDTO
+            res.EntityDTO = _mapper.Map<Project, ProjectDTO>(project);
             res.Success = true;
             return res;
         }

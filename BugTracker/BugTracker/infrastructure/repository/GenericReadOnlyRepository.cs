@@ -33,7 +33,7 @@ namespace BugTracker.infrastructure.repository
                 .ToList();
         }
 
-        public T FindById(Guid id)
+        public virtual T FindById(Guid id)
         {
             return _table.Find(id);
         }

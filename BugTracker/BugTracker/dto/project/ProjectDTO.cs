@@ -11,10 +11,10 @@ namespace BugTracker.dto
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime Deadline { get; set; }
-        ICollection<ProjectUserDTO> UsersOnProject { get; set; }
-        ICollection<ProjectUserRequestDTO> PendingRequests { get; set; }
-        ICollection<ProjectUserRequestDTO> DeniedRequests { get; set; }
-        ICollection<Ticket> RecentTickets { get; set; }
+        public ICollection<ProjectUserDTO> UsersOnProject { get; set; }
+        public ICollection<ProjectUserRequestDTO> PendingRequests { get; set; }
+        public ICollection<ProjectUserRequestDTO> DeniedRequests { get; set; }
+        public ICollection<Ticket> RecentTickets { get; set; }
         public int NumOfTickets { get; set; }
 
         public ProjectDTO() 

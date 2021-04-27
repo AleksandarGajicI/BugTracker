@@ -6,7 +6,7 @@ using BugTracker.repositories.project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugTracker.repositories
 {
@@ -20,6 +20,21 @@ namespace BugTracker.repositories
         public IEnumerable<Project> findProjectWithDeadlineBefore(DateTime deadline)
         {
             return _table.Where(p => p.Deadline == deadline).ToList();
+        }
+
+        public override Project FindById(Guid id)
+        {
+            var proj = _table
+                .Include(p => p.ProjectUsersReq)
+                    .ThenInclude(pur => pur.Role)
+                .Include(p => p.ProjectUsersReq)
+                    .ThenInclude(pur => pur.Sender)
+                .Include(p => p.ProjectUsersReq)
+                    .ThenInclude(pur => pur.UserAssigned)
+                .FirstOrDefault();
+
+            return proj;
+                
         }
     }
 }

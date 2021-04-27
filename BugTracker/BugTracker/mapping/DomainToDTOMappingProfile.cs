@@ -19,7 +19,16 @@ namespace BugTracker.mapping
             CreateMap<Role, RoleDTO>();
             CreateMap<Project, ProjectAbbreviatedDTO>();
 
-            CreateMap<ProjectUserReq, ProjectUserDTO>();
+            CreateMap<ProjectUserReq, ProjectUserDTO>()
+                .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserAssigned.UserName))
+                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
+
+
+            CreateMap<Project, ProjectDTO>()
+                .ForMember(dest => dest.UsersOnProject, 
+                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)));
         }
     }
 }
