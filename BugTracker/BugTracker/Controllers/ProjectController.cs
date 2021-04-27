@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BugTracker.contracts;
 using BugTracker.contracts.requests.project;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.model;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracker.Controllers
 {
-    [Route("api/projects")]
     [ApiController]
     public class ProjectController : ControllerBase
     {
@@ -21,12 +21,28 @@ namespace BugTracker.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Project> GetProjects() 
+        [Route(ApiRoutes.Projects.GetAll)]
+        public IActionResult GetProjects() 
         {
-            return null;
+            var res = _projectService.FindAll();
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route(ApiRoutes.Projects.GetById)]
+        public IActionResult GetProjectById([FromBody] FindByIdRequest req)
+        {
+            var res = _projectService.FindById(req);
+
+            if (!res.Success)
+            {
+                return NotFound(res);
+            }
+            return Ok(res);
         }
 
         [HttpPost]
+        [Route(ApiRoutes.Projects.Update)]
         public IActionResult AddProject([FromBody] CreateProjectRequest project) 
         {
             _projectService.Create(project);
@@ -34,7 +50,8 @@ namespace BugTracker.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
+        [Route(ApiRoutes.Projects.Delete)]
         public IActionResult DeleteProject(DeleteRequest req) 
         {
             _projectService.Delete(req);

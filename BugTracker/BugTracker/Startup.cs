@@ -22,6 +22,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.services.role;
 using BugTracker.repositories.role;
+using BugTracker.services.project;
 
 namespace BugTracker
 {
@@ -79,6 +80,7 @@ namespace BugTracker
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
 

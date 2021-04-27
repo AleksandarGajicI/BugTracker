@@ -27,5 +27,13 @@ namespace BugTracker.contracts
             public const string GetAll = Base + "/roles";
             public const string GetById = Base + "/roles/id/";
         }
+
+        public static class Projects
+        {
+            public const string GetAll = Base + "/projects";
+            public const string GetById = Base + "/projects/id/";
+            public const string Update = Base + "/projects";
+            public const string Delete = Base + "/projects";
+        }
     }
 }

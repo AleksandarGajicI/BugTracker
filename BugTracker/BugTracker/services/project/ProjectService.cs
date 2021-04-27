@@ -1,8 +1,11 @@
-﻿using BugTracker.contracts.requests.project;
+﻿using AutoMapper;
+using BugTracker.contracts.requests.project;
 using BugTracker.dto;
 using BugTracker.dto.project;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
+using BugTracker.model;
+using BugTracker.repositories.project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +15,17 @@ namespace BugTracker.services.project
 {
     public class ProjectService : IProjectService
     {
-        public CreateResponse<ProjectDTO> Create(CreateProjectRequest req)
+
+        private readonly IProjectRepository _projectRepository;
+        private readonly IMapper _mapper;
+
+        public ProjectService(IProjectRepository projectRepository, IMapper mapper)
+        {
+            _projectRepository = projectRepository;
+            _mapper = mapper;
+        }
+
+            public CreateResponse<ProjectDTO> Create(CreateProjectRequest req)
         {
             throw new NotImplementedException();
         }
@@ -22,17 +35,35 @@ namespace BugTracker.services.project
             throw new NotImplementedException();
         }
 
-        public FindAllResponse<ProjectDTO> FindAll()
+        public FindAllResponse<ProjectAbbreviatedDTO> FindAll()
         {
-            throw new NotImplementedException();
+            var res = new FindAllResponse<ProjectAbbreviatedDTO>();
+            var projects = _projectRepository.FindAll().ToList();
+            res.FoundEntitiesDTO = 
+                _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projects);
+            res.Success = true;
+            return res;
+
         }
 
-        public FindByIdResponse<ProjectAbbreviatedDTO> FindById(FindByIdRequest req)
+        public FindByIdResponse<ProjectDTO> FindById(FindByIdRequest req)
         {
-            throw new NotImplementedException();
+            var res = new FindByIdResponse<ProjectDTO>();
+
+            var project = _projectRepository.FindById(req.Id);
+            if (project is null)
+            {
+                res.Errors.Add("Project not found!");
+                res.Success = false;
+                return res;
+            }
+
+            //map Project to ProjectDTO
+            res.Success = true;
+            return res;
         }
 
-        public FindPageResponse<ProjectDTO> FindPage(FindPageRequest req)
+        public FindPageResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest req)
         {
             throw new NotImplementedException();
         }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BugTracker.dto;
+using BugTracker.dto.project;
 using BugTracker.model;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,9 @@ namespace BugTracker.mapping
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName));
 
             CreateMap<Role, RoleDTO>();
+            CreateMap<Project, ProjectAbbreviatedDTO>();
+
+            CreateMap<ProjectUserReq, ProjectUserDTO>();
         }
     }
 }
