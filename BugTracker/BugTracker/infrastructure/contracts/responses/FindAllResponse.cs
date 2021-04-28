@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.contracts.responses
 {
-    public class FindAllResponse<T> : BaseResponse
+    public class FindAllResponse<T> : ResponseBase
         where T : BaseDTO
     {
         public ICollection<T> FoundEntitiesDTO { get; set; }

@@ -21,8 +21,6 @@ namespace BugTracker.services.project
 
         public FindByIdResponse<ProjectDTO> FindById(FindByIdRequest req);
 
-        public FindPageResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest req);
-
         public UpdateResponse<ProjectDTO> Update(UpdateProjectRequest req);
     }
 }

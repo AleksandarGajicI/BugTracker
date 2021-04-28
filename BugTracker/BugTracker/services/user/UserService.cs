@@ -144,18 +144,9 @@ namespace BugTracker.services.user
             return res;
         }
 
-        public FindPageResponse<UserDTO> FindPage(FindPageRequest req)
+        public ResponseBase Logout(LogoutRequest req)
         {
-            List<User> users = new List<User>();
-
-            var query = users.AsQueryable();
-            var result = _userRepository.FindWithPaging(query, req.PageNum, req.PageSize);
-            return null;
-        }
-
-        public BaseResponse Logout(LogoutRequest req)
-        {
-            var res = new BaseResponse();
+            var res = new ResponseBase();
 
             _authService.Logout(req.UserName);
             res.Success = true;
@@ -202,14 +193,14 @@ namespace BugTracker.services.user
             return res;
         }
 
-        private BaseResponse ReturnFailureResponseWith(BaseResponse res, string message)
+        private ResponseBase ReturnFailureResponseWith(ResponseBase res, string message)
         {
             res.Errors.Add(message);
             res.Success = false;
             return res;
         }
 
-        private BaseResponse ReturnFailureResponseWithMultiple(BaseResponse res, ICollection<BusinessRule> errors)
+        private ResponseBase ReturnFailureResponseWithMultiple(ResponseBase res, ICollection<BusinessRule> errors)
         {
             foreach (var error in errors)
             {

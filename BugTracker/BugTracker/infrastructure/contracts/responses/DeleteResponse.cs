@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.contracts.responses
 {
-    public class DeleteResponse : BaseResponse
+    public class DeleteResponse : ResponseBase
     {
         public Guid IdDeleted { get; set; }
 

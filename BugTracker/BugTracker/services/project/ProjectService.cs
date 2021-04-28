@@ -2,6 +2,8 @@
 using BugTracker.contracts.requests.project;
 using BugTracker.dto;
 using BugTracker.dto.project;
+using BugTracker.helpers;
+using BugTracker.helpers.project;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.model;
@@ -9,7 +11,6 @@ using BugTracker.repositories.project;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BugTracker.services.project
 {
@@ -64,9 +65,34 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public FindPageResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest req)
+        public FindPageResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest<ProjectFilterOptions, ProjectOrderOptions> req)
         {
-            throw new NotImplementedException();
+            var res = new FindPageResponse<ProjectAbbreviatedDTO>();
+            var query = _projectRepository.GetBasicQuery();
+
+            foreach (var option in req.Filters)
+            {
+                query.ApplyFilterOption(option.Option, option.Value);
+            }
+
+            query.ApplySortingOptions(req.SortingOption)
+                .Page(req.PageNum, req.PageSize);
+
+            var projects = query.ToList();
+
+            if (projects != null || projects.Count == 0)
+            {
+                res.Errors.Add("Not found!");
+                res.Success = false;
+                return res;
+            }
+
+            res.Success = true;
+            res.EntitiesDTO = _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projects);
+            res.PageNum = req.PageNum;
+            res.PageSize = req.PageSize;
+            res.MaxPage = query.Count() / req.PageSize;
+            return res;
         }
 
         public UpdateResponse<ProjectDTO> Update(UpdateProjectRequest req)

@@ -13,6 +13,6 @@ namespace BugTracker.services.user
 {
     public interface IUserService : IService<UserDTO, UserDTO, RegisterUserRequest, UpdateUserRequest>
     {
-        public BaseResponse Logout(LogoutRequest req);
+        public ResponseBase Logout(LogoutRequest req);
     }
 }

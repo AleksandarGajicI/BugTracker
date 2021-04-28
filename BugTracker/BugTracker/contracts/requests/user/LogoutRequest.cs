@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.contracts.requests.user
 {
-    public class LogoutRequest : BaseRequest
+    public class LogoutRequest : RequestBase
     {
         public string UserName { get; set; }
     }

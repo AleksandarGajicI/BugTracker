@@ -10,8 +10,8 @@ namespace BugTracker.infrastructure.services
 {
     public interface IService<T, TById, TCreate, TUpdate> : IReadOnlyService<T, TById>, IPersistanceService<T, TCreate, TUpdate>
         where T : BaseDTO
-        where TCreate : BaseRequest
-        where TUpdate : BaseRequest
+        where TCreate : RequestBase
+        where TUpdate : RequestBase
         where TById : BaseDTO
     {
     }

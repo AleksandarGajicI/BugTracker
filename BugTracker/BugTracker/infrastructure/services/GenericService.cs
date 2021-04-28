@@ -15,8 +15,8 @@ namespace BugTracker.infrastructure.services
         where T : BaseDTO
         where TById : BaseDTO
         where TEntity : EntityBase
-        where TCreate : BaseRequest
-        where TUpdate : BaseRequest
+        where TCreate : RequestBase
+        where TUpdate : RequestBase
     {
         private readonly IUnitOfWork _uow;
 

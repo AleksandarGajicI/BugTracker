@@ -51,12 +51,5 @@ namespace BugTracker.services.role
             return res;
         }
 
-        public FindPageResponse<RoleDTO> FindPage(FindPageRequest req)
-        {
-            var res = new FindPageResponse<RoleDTO>();
-            res.Success = false;
-            res.Errors.Add("Feature not supported!");
-            return res;
-        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.contracts.requests.project
 {
-    public class CreateProjectRequest : BaseRequest
+    public class CreateProjectRequest : RequestBase
     {
         public string Name { get; set; }
         public DateTime Deadline { get; set; }

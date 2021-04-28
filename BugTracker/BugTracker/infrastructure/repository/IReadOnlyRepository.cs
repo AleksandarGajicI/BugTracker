@@ -10,6 +10,6 @@ namespace BugTracker.repositories
     {
         public T FindById(Guid id);
         public IEnumerable<T> FindAll();
-        public IEnumerable<T> FindWithPaging(IQueryable<T> query, int pageNum, int pageSize);
+        public IQueryable<T> GetBasicQuery();
     }
 }

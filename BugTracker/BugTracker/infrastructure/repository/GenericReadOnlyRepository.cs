@@ -26,16 +26,14 @@ namespace BugTracker.infrastructure.repository
             return _table.ToList();
         }
 
-        public IEnumerable<T> FindWithPaging(IQueryable<T> query, int pageNum, int pageSize)
-        {
-            return query.Skip((pageNum - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-        }
-
         public virtual T FindById(Guid id)
         {
             return _table.Find(id);
+        }
+
+        public IQueryable<T> GetBasicQuery()
+        {
+            return _table.AsQueryable();
         }
     }
 }

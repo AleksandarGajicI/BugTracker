@@ -15,6 +15,5 @@ namespace BugTracker.infrastructure.services
     {
         public FindAllResponse<T> FindAll();
         public FindByIdResponse<TById> FindById(FindByIdRequest req);
-        public FindPageResponse<T> FindPage(FindPageRequest req);
     }
 }

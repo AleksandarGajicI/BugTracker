@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.contracts.requests.user
 {
-    public class UpdateUserRequest : BaseRequest
+    public class UpdateUserRequest : RequestBase
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }

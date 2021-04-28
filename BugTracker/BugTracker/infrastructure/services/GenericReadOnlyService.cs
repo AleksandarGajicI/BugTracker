@@ -57,11 +57,5 @@ namespace BugTracker.infrastructure.services
             return res;
         }
 
-        public FindPageResponse<T> FindPage(FindPageRequest req)
-        {
-            var res = new FindPageResponse<T>();
-            //var entities = _repository.FindWithPaging(null, req.PageNum, req.PageSize);
-            return res;
-        }
     }
 }

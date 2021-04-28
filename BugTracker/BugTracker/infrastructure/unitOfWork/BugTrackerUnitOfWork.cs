@@ -38,13 +38,13 @@ namespace BugTracker.infrastructure.unitOfWork
                 foreach (var updated in updatedEntities.Keys)
                 {
                     Console.WriteLine("updating");
-                    updatedEntities[updated].PersistCreationOf(updated);
+                    updatedEntities[updated].PersistUpdateOf(updated);
                 }
 
                 foreach (var deleted in deletedEntities.Keys)
                 {
                     Console.WriteLine("deleting");
-                    deletedEntities[deleted].PersistCreationOf(deleted);
+                    deletedEntities[deleted].PersistDeletionOf(deleted);
                 }
 
                 Console.WriteLine("calling saving changes");

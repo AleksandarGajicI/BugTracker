@@ -11,8 +11,8 @@ namespace BugTracker.infrastructure.services
 {
     public interface IPersistanceService<T, TCreate, TUpdate>
         where T : BaseDTO 
-        where TCreate : BaseRequest
-        where TUpdate : BaseRequest
+        where TCreate : RequestBase
+        where TUpdate : RequestBase
     {
         public CreateResponse<T> Create(TCreate req);
         public DeleteResponse Delete(DeleteRequest req);

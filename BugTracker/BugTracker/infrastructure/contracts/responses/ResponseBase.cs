@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.contracts.responses
 {
-    public class BaseResponse
+    public class ResponseBase
     {
         public ICollection<string> Errors { get; set; }
         public bool Success { get; set; }
 
-        public BaseResponse()
+        public ResponseBase()
         {
             Errors = new List<string>();
         }

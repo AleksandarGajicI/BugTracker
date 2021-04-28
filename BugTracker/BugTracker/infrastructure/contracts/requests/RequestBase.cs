@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.contracts.requests
 {
-    public interface BaseRequest
+    public interface RequestBase
     {
     }
 }
