@@ -8,6 +8,6 @@ namespace BugTracker.repositories.user
 {
     public interface IRoleRepository : IReadOnlyRepository<Role>
     {
-
+        public Role FindRoleByName(string name);
     }
 }

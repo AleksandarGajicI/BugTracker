@@ -34,6 +34,7 @@ namespace BugTracker.contracts
             public const string GetById = Base + "/projects/id/";
             public const string Update = Base + "/projects";
             public const string Delete = Base + "/projects";
+            public const string Create = Base + "/projects";
         }
     }
 }

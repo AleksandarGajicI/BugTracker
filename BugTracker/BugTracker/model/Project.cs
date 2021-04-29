@@ -21,7 +21,10 @@ namespace BugTracker.model
             Tickets = new List<Ticket>();
         }
 
-        public Project(string name, string description, DateTime deadline, bool closed = false)
+        public Project(string name, 
+                        string description, 
+                        DateTime deadline, 
+                        bool closed = false)
             : this()
         {
             Id = Guid.NewGuid();
@@ -56,7 +59,26 @@ namespace BugTracker.model
 
         public override void Validate()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrWhiteSpace(Name))
+            {
+                AddBrokenRule(new BusinessRule("Name", "Project must have a name that is not null or empty character."));
+            }
+
+            if (Deadline == null)
+            {
+                AddBrokenRule(new BusinessRule("Deadline", "Project must have a deadline set."));
+            }
+
+            if (Id == null)
+            {
+                AddBrokenRule(new BusinessRule("Id", "Project must have an unique identifier."));
+            }
+
+            if (ProjectUsersReq.Count > 0 && ProjectUsersReq.Where(pur => pur.Role.RoleName == "PROJECT_MANAGER") == null)
+            {
+                AddBrokenRule(new BusinessRule("UsersOnProject", "Project must have a Project Manager."));
+            }
+
         }
 
         public void AddTicket(Ticket ticket)

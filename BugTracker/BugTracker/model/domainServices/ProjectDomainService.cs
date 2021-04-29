@@ -18,7 +18,8 @@ namespace BugTracker.model.domainServices
                 "Automatic assignement",
                 owner,
                 role,
-                project);
+                project,
+                true);
 
             req.Sender = owner;
 

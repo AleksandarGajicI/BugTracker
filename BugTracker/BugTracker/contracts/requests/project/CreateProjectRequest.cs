@@ -13,5 +13,7 @@ namespace BugTracker.contracts.requests.project
 
         public Guid OwnerId { get; set; }
         public string UserName { get; set; }
+
+        public string Description { get; set; }
     }
 }

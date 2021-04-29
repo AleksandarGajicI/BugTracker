@@ -6,8 +6,11 @@ using BugTracker.helpers;
 using BugTracker.helpers.project;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
+using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
+using BugTracker.model.domainServices;
 using BugTracker.repositories.project;
+using BugTracker.repositories.user;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,17 +21,92 @@ namespace BugTracker.services.project
     {
 
         private readonly IProjectRepository _projectRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly ProjectDomainService _projectDomainService;
 
-        public ProjectService(IProjectRepository projectRepository, IMapper mapper)
+        public ProjectService(IProjectRepository projectRepository,
+                                IUserRepository userRepository,
+                                IRoleRepository roleRepository,
+                                IUnitOfWork uow , 
+                                IMapper mapper)
         {
             _projectRepository = projectRepository;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
+            _uow = uow;
             _mapper = mapper;
+            _projectDomainService = new ProjectDomainService();
+
         }
 
-            public CreateResponse<ProjectDTO> Create(CreateProjectRequest req)
+        public CreateResponse<ProjectDTO> Create(CreateProjectRequest req)
         {
-            throw new NotImplementedException();
+            var res = new CreateResponse<ProjectDTO>();
+
+            var user = _userRepository.FindById(req.OwnerId);
+
+            if (user == null)
+            {
+                res.Errors.Add("User not found");
+                res.Success = false;
+                return res;
+            }
+
+            var role = _roleRepository.FindRoleByName("PROJECT_MANAGER");
+
+            if (role == null)
+            {
+                res.Errors.Add("Error ocurred during asigning roles");
+                res.Success = false;
+                return res;
+            }
+
+            Console.WriteLine("creating project... ");
+
+            var project = _projectDomainService.CreateProject(user,
+                                                              req.Name,
+                                                              req.Description,
+                                                              req.Deadline,
+                                                              role);
+
+
+
+            project.Validate();
+
+            if (project.GetBrokenRules().Count > 0)
+            {
+                foreach (var brokenRule in project.GetBrokenRules())
+                {
+                    res.Errors.Add(brokenRule.Rule);
+                }
+                res.Success = false;
+                return res;
+            }
+
+            foreach (var pur in project.ProjectUsersReq)
+            {
+                Console.WriteLine(pur.UserAssigned.UserName);
+            }
+
+            _projectRepository.Save(project);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                res.Errors.Add(ex.Message);
+                res.Success = false;
+                return res;
+            }
+
+            res.Success = true;
+            res.EntityDTO = _mapper.Map<Project, ProjectDTO>(project);
+            return res;
         }
 
         public DeleteResponse Delete(DeleteRequest req)

@@ -24,7 +24,7 @@ namespace BugTracker.repositories
 
         public override Project FindById(Guid id)
         {
-            var proj = _table
+            var proj = _table.Where(p => p.Id == id)
                 .Include(p => p.ProjectUsersReq)
                     .ThenInclude(pur => pur.Role)
                 .Include(p => p.ProjectUsersReq)

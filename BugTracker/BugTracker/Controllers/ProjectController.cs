@@ -42,11 +42,24 @@ namespace BugTracker.Controllers
         }
 
         [HttpPost]
-        [Route(ApiRoutes.Projects.Update)]
+        [Route(ApiRoutes.Projects.Create)]
         public IActionResult AddProject([FromBody] CreateProjectRequest project) 
         {
-            _projectService.Create(project);
+            var res = _projectService.Create(project);
 
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route(ApiRoutes.Projects.Update)]
+        public IActionResult UpdateProject([FromBody]UpdateProjectRequest req)
+        {
+            var res = _projectService.Update(req);
             return Ok();
         }
 

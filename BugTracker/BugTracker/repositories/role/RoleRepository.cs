@@ -15,5 +15,10 @@ namespace BugTracker.repositories.role
             : base(context)
         { 
         }
+
+        public Role FindRoleByName(string name)
+        {
+            return _table.Where(r => r.RoleName.Contains(name)).FirstOrDefault();
+        }
     }
 }
