@@ -50,21 +50,15 @@ namespace BugTracker.services.project
 
             if (user == null)
             {
-                res.Errors.Add("User not found");
-                res.Success = false;
-                return res;
+                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith("User not found.");
             }
 
             var role = _roleRepository.FindRoleByName("PROJECT_MANAGER");
 
             if (role == null)
             {
-                res.Errors.Add("Error ocurred during asigning roles");
-                res.Success = false;
-                return res;
+                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith("Error ocurred during asigning roles");
             }
-
-            Console.WriteLine("creating project... ");
 
             var project = _projectDomainService.CreateProject(user,
                                                               req.Name,
@@ -78,17 +72,7 @@ namespace BugTracker.services.project
 
             if (project.GetBrokenRules().Count > 0)
             {
-                foreach (var brokenRule in project.GetBrokenRules())
-                {
-                    res.Errors.Add(brokenRule.Rule);
-                }
-                res.Success = false;
-                return res;
-            }
-
-            foreach (var pur in project.ProjectUsersReq)
-            {
-                Console.WriteLine(pur.UserAssigned.UserName);
+                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWithMultiple(project.GetBrokenRules());
             }
 
             _projectRepository.Save(project);
@@ -99,9 +83,7 @@ namespace BugTracker.services.project
             }
             catch (Exception ex)
             {
-                res.Errors.Add(ex.Message);
-                res.Success = false;
-                return res;
+                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.Success = true;
@@ -117,9 +99,7 @@ namespace BugTracker.services.project
 
             if (project == null)
             {
-                res.Errors.Add("Project not found.");
-                res.Success = false;
-                return res;
+                return (DeleteResponse) res.ReturnErrorResponseWith("Project not found.");
             }
 
             _projectRepository.Delete(project);
@@ -130,9 +110,7 @@ namespace BugTracker.services.project
             }
             catch (Exception ex)
             {
-                res.Errors.Add(ex.Message);
-                res.Success = false;
-                return res;
+                return (DeleteResponse) res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.Success = true;
@@ -158,12 +136,9 @@ namespace BugTracker.services.project
             var project = _projectRepository.FindById(req.Id);
             if (project is null)
             {
-                res.Errors.Add("Project not found!");
-                res.Success = false;
-                return res;
+                return (FindByIdResponse<ProjectDTO>) res.ReturnErrorResponseWith("Project not found");
             }
 
-            //map Project to ProjectDTO
             res.EntityDTO = _mapper.Map<Project, ProjectDTO>(project);
             res.Success = true;
             return res;
@@ -186,9 +161,8 @@ namespace BugTracker.services.project
 
             if (projects != null || projects.Count == 0)
             {
-                res.Errors.Add("Not found!");
-                res.Success = false;
-                return res;
+                return (FindPageResponse<ProjectAbbreviatedDTO>)
+                    res.ReturnErrorResponseWith("Projects not found for query");
             }
 
             res.Success = true;

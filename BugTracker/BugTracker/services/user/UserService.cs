@@ -5,13 +5,12 @@ using BugTracker.contracts.response.user;
 using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
-using BugTracker.infrastructure.domain;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
 using BugTracker.repositories.user;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using BugTracker.helpers;
 
 namespace BugTracker.services.user
 {
@@ -35,6 +34,8 @@ namespace BugTracker.services.user
         public CreateResponse<UserDTO> Create(RegisterUserRequest req)
         {
             var res = new CreateUserWithTokenResponse();
+                
+
 
             var user = new User(req.Email, req.UserName, req.FirstName, req.LastName);
 
@@ -42,21 +43,15 @@ namespace BugTracker.services.user
 
             if (user.GetBrokenRules().Count > 0)
             {
-                foreach (var brokenRule in user.GetBrokenRules())
-                {
-                    res.Errors.Add(brokenRule.Rule);
-                    res.Success = false;
-                    return res;
-                }
+                return (CreateUserWithTokenResponse)res.ReturnErrorResponseWithMultiple(user.GetBrokenRules());
             }
 
             var userExists = _authService.FindByEmailOrUserName(req.Email, req.UserName).GetAwaiter().GetResult();
 
             if (userExists)
             {
-                res.Errors.Add("User with the given user name or email already exists");
-                res.Success = false;
-                return res;
+                return (CreateUserWithTokenResponse)
+                    res.ReturnErrorResponseWith("User with the given user name or email already exists");
             }
 
             string token;
@@ -64,9 +59,9 @@ namespace BugTracker.services.user
             {
                 token = _authService.Register(user.UserName, user.Email, req.Password).Result;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return (CreateResponse<UserDTO>)ReturnFailureResponseWith(res, e.Message);
+                return (CreateUserWithTokenResponse) res.ReturnErrorResponseWith(ex.Message);
             }
 
             _userRepository.Save(user);
@@ -75,13 +70,11 @@ namespace BugTracker.services.user
             {
                 _uow.Commit();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 _authService.DeleteUser(user.UserName);
 
-                res.Errors.Add(e.Message);
-                res.Success = false;
-                return res;
+                return (CreateUserWithTokenResponse) res.ReturnErrorResponseWith(ex.Message);
             }
             
             res.Success = true;
@@ -99,7 +92,7 @@ namespace BugTracker.services.user
 
             if (user == null)
             {
-                return (DeleteResponse)ReturnFailureResponseWith(res, "User not found!");
+                return (DeleteResponse) res.ReturnErrorResponseWith("User not found!");
             }
 
             try
@@ -109,7 +102,7 @@ namespace BugTracker.services.user
             }
             catch (Exception ex)
             {
-                return (DeleteResponse)ReturnFailureResponseWith(res, ex.Message);
+                return (DeleteResponse) res.ReturnErrorResponseWith(ex.Message);
             }
 
             _authService.DeleteUser(user.UserName);
@@ -136,7 +129,7 @@ namespace BugTracker.services.user
 
             if (user == null)
             {
-                return (FindByIdResponse<UserDTO>) ReturnFailureResponseWith(res, "User not found");
+                return (FindByIdResponse<UserDTO>) res.ReturnErrorResponseWith("User not found");
             }
 
             res.EntityDTO = _mapper.Map<User, UserDTO>(user);
@@ -160,12 +153,12 @@ namespace BugTracker.services.user
 
             if (user == null)
             {
-                return (UpdateResponse<UserDTO>) ReturnFailureResponseWith(res, "User not found");
+                return (UpdateResponse<UserDTO>) res.ReturnErrorResponseWith("User not found");
             }
 
             if (req.FirstName == null || req.LastName == null)
             {
-                return (UpdateResponse<UserDTO>)ReturnFailureResponseWith(res, "Bad request");
+                return (UpdateResponse<UserDTO>) res.ReturnErrorResponseWith("Bad request");
             }
 
             user.FirstName = req.FirstName;
@@ -175,7 +168,7 @@ namespace BugTracker.services.user
 
             if (user.GetBrokenRules().Count > 0)
             { 
-                return (UpdateResponse<UserDTO>)ReturnFailureResponseWithMultiple(res, user.GetBrokenRules());
+                return (UpdateResponse<UserDTO>) res.ReturnErrorResponseWithMultiple(user.GetBrokenRules());
             }
 
             try
@@ -183,9 +176,9 @@ namespace BugTracker.services.user
                 _userRepository.Update(user);
                 _uow.Commit();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return (UpdateResponse<UserDTO>)ReturnFailureResponseWith(res, e.Message);
+                return (UpdateResponse<UserDTO>) res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.EntityDTO = _mapper.Map<User, UserDTO>(user);
@@ -193,22 +186,6 @@ namespace BugTracker.services.user
             return res;
         }
 
-        private ResponseBase ReturnFailureResponseWith(ResponseBase res, string message)
-        {
-            res.Errors.Add(message);
-            res.Success = false;
-            return res;
-        }
-
-        private ResponseBase ReturnFailureResponseWithMultiple(ResponseBase res, ICollection<BusinessRule> errors)
-        {
-            foreach (var error in errors)
-            {
-                res.Errors.Add(error.Rule);
-            }
-            res.Success = false;
-            return res;
-        }
     }
 
 
