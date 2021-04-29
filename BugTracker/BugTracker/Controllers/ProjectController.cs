@@ -67,8 +67,13 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.Delete)]
         public IActionResult DeleteProject(DeleteRequest req) 
         {
-            _projectService.Delete(req);
-            return Ok();
+            var res =_projectService.Delete(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
         }
     }
 }

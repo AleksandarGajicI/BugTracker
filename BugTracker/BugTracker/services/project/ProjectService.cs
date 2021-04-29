@@ -111,7 +111,33 @@ namespace BugTracker.services.project
 
         public DeleteResponse Delete(DeleteRequest req)
         {
-            throw new NotImplementedException();
+            var res = new DeleteResponse();
+
+            var project = _projectRepository.FindById(req.Id);
+
+            if (project == null)
+            {
+                res.Errors.Add("Project not found.");
+                res.Success = false;
+                return res;
+            }
+
+            _projectRepository.Delete(project);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                res.Errors.Add(ex.Message);
+                res.Success = false;
+                return res;
+            }
+
+            res.Success = true;
+            res.IdDeleted = project.Id;
+            return res;
         }
 
         public FindAllResponse<ProjectAbbreviatedDTO> FindAll()

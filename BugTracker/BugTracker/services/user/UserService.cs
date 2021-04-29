@@ -104,7 +104,7 @@ namespace BugTracker.services.user
 
             try
             {
-                _userRepository.Delete(req.Id);
+                _userRepository.Delete(user);
                 _uow.Commit();
             }
             catch (Exception ex)

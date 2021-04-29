@@ -52,9 +52,9 @@ namespace BugTracker.infrastructure.repository
             _uow.RegisterUpdated(entity, this);
         }
 
-        public void Delete(Guid id)
+        public void Delete(T entity)
         {
-            _uow.RegisterDeleted(_table.Find(id), this);
+            _uow.RegisterDeleted(entity, this);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace BugTracker.helpers.project
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine(ex.Message);
                         return projectsQuery;
                     }
                     return projectsQuery.Where(p => p.Deadline >= date);

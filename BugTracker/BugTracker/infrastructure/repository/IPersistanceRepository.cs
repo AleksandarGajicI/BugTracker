@@ -11,6 +11,6 @@ namespace BugTracker.repositories.generic
     {
         public void Save(T entity);
         public void Update(T entity);
-        public void Delete(Guid id);
+        public void Delete(T entity);
     }
 }

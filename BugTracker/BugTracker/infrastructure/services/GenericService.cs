@@ -58,7 +58,16 @@ namespace BugTracker.infrastructure.services
             var id = req.Id;
             var res = new DeleteResponse();
 
-            ((GenericRepository<TEntity>)_repository).Delete(id);
+            var entity = _repository.FindById(id);
+
+            if (entity == null)
+            {
+                res.Success = false;
+                res.Errors.Add("Not found.");
+                return res;
+            }
+
+            ((GenericRepository<TEntity>)_repository).Delete(entity);
 
             _uow.Commit();
 

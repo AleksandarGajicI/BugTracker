@@ -1,5 +1,7 @@
 ﻿using BugTracker.database;
+using BugTracker.database.config;
 using BugTracker.infrastructure.domain;
+using BugTracker.model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,8 @@ namespace BugTracker.infrastructure.unitOfWork
         IDictionary<EntityBase, IUnitOfWorkRepository> deletedEntities = 
             new Dictionary<EntityBase, IUnitOfWorkRepository>();
 
+        private bool deletedProject;
+
         private readonly BugTrackerDatabase _bugTrackerDbContext;
 
         public BugTrackerUnitOfWork(BugTrackerDatabase context)
@@ -26,12 +30,13 @@ namespace BugTracker.infrastructure.unitOfWork
 
         public void Commit()
         {
-            using (var transaction = _bugTrackerDbContext.Database.BeginTransaction())
+            var transaction = _bugTrackerDbContext.Database.BeginTransaction();
+
+            try
             {
                 foreach (var created in createdEntities.Keys)
                 {
                     Console.WriteLine("saving");
-                    Console.WriteLine("Db context: " + _bugTrackerDbContext);
                     createdEntities[created].PersistCreationOf(created);
                 }
 
@@ -44,7 +49,15 @@ namespace BugTracker.infrastructure.unitOfWork
                 foreach (var deleted in deletedEntities.Keys)
                 {
                     Console.WriteLine("deleting");
+
+                    if (deleted is Project)
+                    {
+                        deletedProject = true;
+                        _bugTrackerDbContext.Database.ExecuteSqlRaw(Triggers.DisableProjectManagerTrigger);
+                    }
+
                     deletedEntities[deleted].PersistDeletionOf(deleted);
+
                 }
 
                 Console.WriteLine("calling saving changes");
@@ -52,6 +65,23 @@ namespace BugTracker.infrastructure.unitOfWork
                 _bugTrackerDbContext.SaveChanges();
                 transaction.Commit();
 
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw ex;
+            }
+            finally
+            {
+
+                if (deletedProject)
+                {
+                    _bugTrackerDbContext.Database.ExecuteSqlRaw(Triggers.EnableProjectManagerTrigger);
+                }
+                transaction.Dispose();
+                createdEntities.Clear();
+                updatedEntities.Clear();
+                deletedEntities.Clear();
             }
         }
 
