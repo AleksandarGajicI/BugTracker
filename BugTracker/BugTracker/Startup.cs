@@ -25,6 +25,8 @@ using BugTracker.repositories.role;
 using BugTracker.services.project;
 using BugTracker.repositories.projectUserRequests;
 using BugTracker.services.projectUserReq;
+using BugTracker.services.ticketStatus;
+using BugTracker.repositories.ticketStatus;
 
 namespace BugTracker
 {
@@ -82,11 +84,14 @@ namespace BugTracker
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IProjectUserReqRepository, ProjectUserReqRepository>();
+            services.AddScoped<ITicketStatusRepository, TicketStatusRepository>();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IProjectUserReqService, ProjectUserReqService>();
+            services.AddScoped<ITicketStatusService, TicketStatusService>();
 
             services.AddAutoMapper(typeof(Startup));
         }

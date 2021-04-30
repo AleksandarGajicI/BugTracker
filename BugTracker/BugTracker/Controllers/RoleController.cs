@@ -23,9 +23,7 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Roles.GetAll)]
         public IActionResult GetAllRoles()
         {
-            FindAllResponse<RoleDTO> res = _roleService.FindAll();
-
-            return Ok(res);
+            return Ok(_roleService.FindAll());
         }
 
         [HttpGet]

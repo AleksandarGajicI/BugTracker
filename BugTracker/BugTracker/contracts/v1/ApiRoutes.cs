@@ -47,5 +47,10 @@ namespace BugTracker.contracts
             public const string Reply = Base + "/projectUserReq/Reply";
 
         }
+
+        public static class TicketStatus
+        { 
+            public const string GetAll = Base + "/ticketStatus";
+        }
     }
 }
