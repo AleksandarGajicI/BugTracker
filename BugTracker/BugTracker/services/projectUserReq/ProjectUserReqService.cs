@@ -138,5 +138,50 @@ namespace BugTracker.services.projectUserReq
             res.Success = true;
             return res;
         }
+
+        public ResponseBase ReplyWith(ProjectUserReplyRequest req)
+        {
+            var res = new ResponseBase();
+
+            var pur = _projectUserReqRepository.FindById(req.RequestId);
+
+            if (pur == null)
+            {
+                return res.ReturnErrorResponseWith("Specified request for project not found.");
+            }
+
+            if (pur.UserAssigned.Id != req.UserAssignedId)
+            {
+                return res.ReturnErrorResponseWith("Request is not yours.");
+            }
+
+            if (pur.Accepted == req.IsAccepted)
+            {
+                return res.ReturnErrorResponseWith("Bad request.");
+            }
+
+            pur.Accepted = req.IsAccepted;
+
+            pur.Validate();
+
+            if (pur.GetBrokenRules().Count > 0)
+            {
+                return res.ReturnErrorResponseWithMultiple(pur.GetBrokenRules());
+            }
+
+            _projectUserReqRepository.Update(pur);
+
+            try 
+            {
+                _uow.Commit();
+            }
+            catch(Exception ex)
+            {
+                return res.ReturnErrorResponseWith(ex.Message);
+            }
+
+            res.Success = true;
+            return res;
+        }
     }
 }

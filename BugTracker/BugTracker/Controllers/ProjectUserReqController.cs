@@ -35,5 +35,17 @@ namespace BugTracker.Controllers
             }
             return Ok(res);
         }
+
+        [HttpPatch]
+        [Route(ApiRoutes.ProjectUserReq.Accept)]
+        public IActionResult AcceptRequest(ProjectUserReplyRequest req)
+        {
+            var res = _projectUserReqService.ReplyWith(req);
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
+        }
     }
 }

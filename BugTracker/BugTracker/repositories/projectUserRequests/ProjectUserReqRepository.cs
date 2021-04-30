@@ -25,5 +25,14 @@ namespace BugTracker.repositories.projectUserRequests
                 .Include(pur => pur.UserAssigned)
                 .ToList();
         }
+
+        public override ProjectUserReq FindById(Guid id)
+        {
+            return _table.Where(pur => pur.Id == id)
+                .Include(pur => pur.Sender)
+                .Include(pur => pur.Role)
+                .Include(pur => pur.UserAssigned)
+                .FirstOrDefault();
+        }
     }
 }

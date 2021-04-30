@@ -12,5 +12,7 @@ namespace BugTracker.services.projectUserReq
     {
         public FindAllResponse<ProjectUserRequestDTO> GetAll();
         public CreateResponse<ProjectUserRequestDTO> Create(CreateProjectUserReqRequest req);
+
+        public ResponseBase ReplyWith(ProjectUserReplyRequest req);
     }
 }
