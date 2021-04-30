@@ -30,7 +30,8 @@ namespace BugTracker.mapping
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
                 .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserAssigned.UserName))
-                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
+                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Accepted));
 
 
             CreateMap<Project, ProjectDTO>()

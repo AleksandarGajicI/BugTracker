@@ -1,4 +1,5 @@
 ﻿using BugTracker.contracts;
+using BugTracker.contracts.requests.projectUserReq;
 using BugTracker.services.projectUserReq;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,19 @@ namespace BugTracker.Controllers
         public IActionResult GetAll()
         {
             return Ok(_projectUserReqService.GetAll());
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.ProjectUserReq.Create)]
+        public IActionResult CreateRequest(CreateProjectUserReqRequest req)
+        {
+            var res = _projectUserReqService.Create(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
         }
     }
 }

@@ -10,6 +10,7 @@ using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
 using BugTracker.model.domainServices;
 using BugTracker.repositories.project;
+using BugTracker.repositories.role;
 using BugTracker.repositories.user;
 using System;
 using System.Collections.Generic;

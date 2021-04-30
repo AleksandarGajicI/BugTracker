@@ -65,7 +65,40 @@ namespace BugTracker.model
 
         public override void Validate()
         {
-            throw new NotImplementedException();
+            if (RequestSent == null)
+            {
+                AddBrokenRule(new BusinessRule("RequestSent", "Request must have a date that it has been sent on."));
+            }
+
+            if (Id == null)
+            {
+                AddBrokenRule(new BusinessRule("Id", "Request must have an unique identifier."));
+            }
+
+            if (UserAssigned == null)
+            {
+                AddBrokenRule(new BusinessRule("UserAssigned", "Request must have a receiver."));
+            }
+
+            if (Role == null)
+            {
+                AddBrokenRule(new BusinessRule("Role", "Request must have a specified role."));
+            }
+
+            if (Sender == null)
+            {
+                AddBrokenRule(new BusinessRule("Sender", "Request must have a sender."));
+            }
+
+            if (Project == null)
+            {
+                AddBrokenRule(new BusinessRule("Project", "Request must have project that it is tied to."));
+            }
+
+            if (DateTime.Compare(RequestSent, DateTime.Now) > 0)
+            {
+                AddBrokenRule(new BusinessRule("RequestSent", "Request can't be sent in future."));
+            }
         }
     }
 }

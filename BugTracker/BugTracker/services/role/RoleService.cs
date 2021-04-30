@@ -3,11 +3,10 @@ using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.model;
-using BugTracker.repositories.user;
+using BugTracker.repositories.role;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BugTracker.services.role
 {

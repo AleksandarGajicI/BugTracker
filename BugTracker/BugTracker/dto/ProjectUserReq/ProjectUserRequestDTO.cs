@@ -13,6 +13,6 @@ namespace BugTracker.dto.ProjectUserReq
         public string Role { get; set; }
         public DateTime InvitedAt { get; set; }
         public string Message { get; set; }
-        public string status { get; set; }
+        public bool Status { get; set; }
     }
 }

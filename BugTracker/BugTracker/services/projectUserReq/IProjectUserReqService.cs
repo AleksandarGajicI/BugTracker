@@ -1,4 +1,5 @@
-﻿using BugTracker.dto.ProjectUserReq;
+﻿using BugTracker.contracts.requests.projectUserReq;
+using BugTracker.dto.ProjectUserReq;
 using BugTracker.infrastructure.contracts.responses;
 using System;
 using System.Collections.Generic;
@@ -10,5 +11,6 @@ namespace BugTracker.services.projectUserReq
     public interface IProjectUserReqService
     {
         public FindAllResponse<ProjectUserRequestDTO> GetAll();
+        public CreateResponse<ProjectUserRequestDTO> Create(CreateProjectUserReqRequest req);
     }
 }

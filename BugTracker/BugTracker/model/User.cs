@@ -74,6 +74,11 @@ namespace BugTracker.model
             {
                 AddBrokenRule(new BusinessRule("LastName", "Invalid LastName!"));
             }
+
+            if (DateTime.Compare(Joined, DateTime.Now) > 0)
+            {
+                AddBrokenRule(new BusinessRule("Joined", "User can't join in the future."));
+            }
         }
     }
 }
