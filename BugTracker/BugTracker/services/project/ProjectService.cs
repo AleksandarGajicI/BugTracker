@@ -175,7 +175,48 @@ namespace BugTracker.services.project
 
         public UpdateResponse<ProjectDTO> Update(UpdateProjectRequest req)
         {
-            throw new NotImplementedException();
+            var res = new UpdateResponse<ProjectDTO>();
+
+            var project = _projectRepository.FindById(req.Id);
+
+            if (project == null)
+            {
+                return (UpdateResponse<ProjectDTO>)res.ReturnErrorResponseWith("Project not found");
+            }
+
+            var owners = project.ProjectUsersReq.Where(pur => pur.Role.RoleName == "PROJECT_MANAGER").ToList();
+
+            if (owners.Find(pur => pur.Id == req.OwnerId) == null)
+            {
+                return (UpdateResponse<ProjectDTO>)res.ReturnErrorResponseWith("Only project managers can update projects!");
+            }
+
+            project.Name = req.Name;
+            project.Description = req.Description;
+            project.Closed = req.Closed;
+            project.Deadline = req.Deadline;
+
+            project.Validate();
+
+            if (project.GetBrokenRules().Count > 0)
+            {
+                return (UpdateResponse<ProjectDTO>)res.ReturnErrorResponseWithMultiple(project.GetBrokenRules());
+            }
+
+            _projectRepository.Update(project);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                return (UpdateResponse<ProjectDTO>)res.ReturnErrorResponseWith(ex.Message);
+            }
+
+            res.Success = true;
+            res.EntityDTO = _mapper.Map<Project, ProjectDTO>(project);
+            return res;
         }
     }
 }

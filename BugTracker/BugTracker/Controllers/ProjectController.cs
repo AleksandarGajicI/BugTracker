@@ -60,7 +60,12 @@ namespace BugTracker.Controllers
         public IActionResult UpdateProject([FromBody]UpdateProjectRequest req)
         {
             var res = _projectService.Update(req);
-            return Ok();
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
         }
 
         [HttpDelete]
