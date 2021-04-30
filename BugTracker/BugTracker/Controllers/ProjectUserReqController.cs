@@ -1,5 +1,6 @@
 ﻿using BugTracker.contracts;
 using BugTracker.contracts.requests.projectUserReq;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.projectUserReq;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,8 +38,8 @@ namespace BugTracker.Controllers
         }
 
         [HttpPatch]
-        [Route(ApiRoutes.ProjectUserReq.Accept)]
-        public IActionResult AcceptRequest(ProjectUserReplyRequest req)
+        [Route(ApiRoutes.ProjectUserReq.Reply)]
+        public IActionResult ReplyRequest(ProjectUserReplyRequest req)
         {
             var res = _projectUserReqService.ReplyWith(req);
             if (!res.Success)
@@ -47,5 +48,20 @@ namespace BugTracker.Controllers
             }
             return Ok(res);
         }
+
+        [HttpDelete]
+        [Route(ApiRoutes.ProjectUserReq.Delete)]
+        public IActionResult Delete(DeleteRequest req)
+        {
+            var res = _projectUserReqService.Delete(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
     }
 }

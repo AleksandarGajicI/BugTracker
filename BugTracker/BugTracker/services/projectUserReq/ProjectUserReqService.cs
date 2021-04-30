@@ -2,6 +2,7 @@
 using BugTracker.contracts.requests.projectUserReq;
 using BugTracker.dto.ProjectUserReq;
 using BugTracker.helpers;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
@@ -124,6 +125,33 @@ namespace BugTracker.services.projectUserReq
             }
 
             res.Success = true;
+            return res;
+        }
+
+        public DeleteResponse Delete(DeleteRequest req)
+        {
+            var res = new DeleteResponse();
+
+            var pur = _projectUserReqRepository.FindById(req.Id);
+
+            if (pur == null)
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith("Specified request not found");
+            }
+
+            _projectUserReqRepository.Delete(pur);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            { 
+                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message);
+            }
+
+            res.Success = true;
+            res.IdDeleted = req.Id;
             return res;
         }
 

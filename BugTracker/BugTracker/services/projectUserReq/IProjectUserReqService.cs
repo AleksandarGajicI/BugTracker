@@ -1,5 +1,6 @@
 ﻿using BugTracker.contracts.requests.projectUserReq;
 using BugTracker.dto.ProjectUserReq;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,8 @@ namespace BugTracker.services.projectUserReq
     {
         public FindAllResponse<ProjectUserRequestDTO> GetAll();
         public CreateResponse<ProjectUserRequestDTO> Create(CreateProjectUserReqRequest req);
-
         public ResponseBase ReplyWith(ProjectUserReplyRequest req);
+
+        public DeleteResponse Delete(DeleteRequest req);
     }
 }

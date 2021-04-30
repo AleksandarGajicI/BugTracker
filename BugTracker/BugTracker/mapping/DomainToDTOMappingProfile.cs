@@ -36,7 +36,9 @@ namespace BugTracker.mapping
 
             CreateMap<Project, ProjectDTO>()
                 .ForMember(dest => dest.UsersOnProject, 
-                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)));
+                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)))
+                .ForMember(dest => dest.PendingRequests,
+                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == false)));
         }
     }
 }
