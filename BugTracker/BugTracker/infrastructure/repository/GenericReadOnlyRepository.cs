@@ -21,7 +21,7 @@ namespace BugTracker.infrastructure.repository
             _table = context.Set<T>();
         }
 
-        public IEnumerable<T> FindAll()
+        public virtual IEnumerable<T> FindAll()
         {
             return _table.ToList();
         }

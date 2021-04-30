@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BugTracker.dto;
 using BugTracker.dto.project;
+using BugTracker.dto.ProjectUserReq;
 using BugTracker.model;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace BugTracker.mapping
             CreateMap<ProjectUserReq, ProjectUserDTO>()
                 .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserAssigned.UserName))
+                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
+
+            CreateMap<ProjectUserReq, ProjectUserRequestDTO>()
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
+                .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserAssigned.UserName))
                 .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
 

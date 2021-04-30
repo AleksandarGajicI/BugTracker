@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.repositories.projectUserRequests
 {
-    interface IProjectUsersRequests : IReadOnlyRepository<ProjectUserReq>, IPersistanceRepository<ProjectUserReq>
+    public interface IProjectUserReqRepository : IReadOnlyRepository<ProjectUserReq>, IPersistanceRepository<ProjectUserReq>
     {
     }
 }

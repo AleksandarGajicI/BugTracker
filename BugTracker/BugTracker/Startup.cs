@@ -23,6 +23,8 @@ using Microsoft.AspNetCore.Identity;
 using BugTracker.services.role;
 using BugTracker.repositories.role;
 using BugTracker.services.project;
+using BugTracker.repositories.projectUserRequests;
+using BugTracker.services.projectUserReq;
 
 namespace BugTracker
 {
@@ -79,10 +81,12 @@ namespace BugTracker
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IProjectUserReqRepository, ProjectUserReqRepository>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IProjectUserReqService, ProjectUserReqService>();
 
             services.AddAutoMapper(typeof(Startup));
         }
