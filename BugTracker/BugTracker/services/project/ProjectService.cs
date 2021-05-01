@@ -145,9 +145,9 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public FindPageResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest<ProjectFilterOptions, ProjectOrderOptions> req)
+        public PagedResponse<ProjectAbbreviatedDTO> FindPage(FindPageRequest<ProjectFilterOptions, ProjectOrderOptions> req)
         {
-            var res = new FindPageResponse<ProjectAbbreviatedDTO>();
+            var res = new PagedResponse<ProjectAbbreviatedDTO>();
             var query = _projectRepository.GetBasicQuery();
 
             foreach (var option in req.Filters)
@@ -162,7 +162,7 @@ namespace BugTracker.services.project
 
             if (projects != null || projects.Count == 0)
             {
-                return (FindPageResponse<ProjectAbbreviatedDTO>)
+                return (PagedResponse<ProjectAbbreviatedDTO>)
                     res.ReturnErrorResponseWith("Projects not found for query");
             }
 

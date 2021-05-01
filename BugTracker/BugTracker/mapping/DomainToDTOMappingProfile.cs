@@ -2,6 +2,7 @@
 using BugTracker.dto;
 using BugTracker.dto.project;
 using BugTracker.dto.ProjectUserReq;
+using BugTracker.dto.ticket;
 using BugTracker.model;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,14 @@ namespace BugTracker.mapping
                             opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == false)));
 
             CreateMap<TicketStatus, TicketStatusDTO>();
+
+            CreateMap<Ticket, TicketAbbreviatedDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status));
+
+            CreateMap<Ticket, TicketDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
+                .ForMember(dest => dest.Reporter, opt => opt.MapFrom(src => src.Reporter.UserAssigned.UserName))
+                .ForMember(dest => dest.RecentComments, opt => opt.MapFrom(src => src.Comments));
         }
     }
 }
