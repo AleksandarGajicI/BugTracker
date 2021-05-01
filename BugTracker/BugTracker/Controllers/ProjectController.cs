@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using BugTracker.contracts;
+using BugTracker.contracts.requests.filterAndOrdering;
 using BugTracker.contracts.requests.project;
+using BugTracker.helpers.uri;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.model;
 using BugTracker.repositories.project;
@@ -14,10 +16,12 @@ namespace BugTracker.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
+        private readonly IUriService _uriService;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(IProjectService projectService, IUriService uriService)
         {
             _projectService = projectService;
+            _uriService = uriService;
         }
 
         [HttpGet]
@@ -78,6 +82,29 @@ namespace BugTracker.Controllers
             {
                 return BadRequest(res);
             }
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route(ApiRoutes.Projects.GetPage)]
+        public IActionResult GetPage([FromQuery] PagedQuery pageQuery,[FromQuery] FilterAndOrderQuery filterAndOrderQuery)
+        {
+            var res = _projectService.FindPage(pageQuery, filterAndOrderQuery);
+
+            var pageNum = (int)pageQuery.PageNum;
+            var pageSize = (int)pageQuery.PageSize;
+
+            var nextPage = pageNum >= 1 ?
+                _uriService.GetAllUri(new PagedQuery(pageSize, pageNum + 1)).ToString() :
+                null;
+
+            var prevPage = pageQuery.PageNum - 1 >= 1 ?
+                _uriService.GetAllUri(new PagedQuery(pageSize, pageNum - 1)).ToString() :
+                null;
+
+            res.NextPage = nextPage;
+            res.PrevPage = prevPage;
+
             return Ok(res);
         }
     }

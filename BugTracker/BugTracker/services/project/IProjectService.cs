@@ -1,4 +1,5 @@
-﻿using BugTracker.contracts.requests.project;
+﻿using BugTracker.contracts.requests.filterAndOrdering;
+using BugTracker.contracts.requests.project;
 using BugTracker.dto;
 using BugTracker.dto.project;
 using BugTracker.infrastructure.contracts.requests;
@@ -22,5 +23,7 @@ namespace BugTracker.services.project
         public FindByIdResponse<ProjectDTO> FindById(FindByIdRequest req);
 
         public UpdateResponse<ProjectDTO> Update(UpdateProjectRequest req);
+
+        public PagedResponse<ProjectAbbreviatedDTO> FindPage(PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder);
     }
 }

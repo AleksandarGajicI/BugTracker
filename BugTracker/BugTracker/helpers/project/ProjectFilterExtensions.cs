@@ -1,4 +1,5 @@
-﻿using BugTracker.model;
+﻿using BugTracker.contracts.requests.filterAndOrdering;
+using BugTracker.model;
 using System;
 using System.Linq;
 
@@ -10,7 +11,8 @@ namespace BugTracker.helpers.project
                                                             ProjectFilterOptions option,
                                                             string filterValue)
         {
-            if (string.IsNullOrEmpty(filterValue))
+            
+            if (string.IsNullOrEmpty(filterValue) || option == ProjectFilterOptions.Default)
             {
                 return projectsQuery;
             }
@@ -22,6 +24,7 @@ namespace BugTracker.helpers.project
                     try
                     {
                         date = DateTime.Parse(filterValue);
+                        Console.WriteLine("Date is: " + date.Date.ToString());
                     }
                     catch (Exception ex)
                     {
@@ -31,7 +34,8 @@ namespace BugTracker.helpers.project
                     return projectsQuery.Where(p => p.Deadline >= date);
 
                 case ProjectFilterOptions.ByName:
-                    return projectsQuery.Where(p => p.Name == filterValue);
+                    Console.WriteLine("Applying name filter");
+                    return projectsQuery.Where(p => p.Name.Contains(filterValue));
 
                 case ProjectFilterOptions.ByDescription:
                     return projectsQuery.Where(p => p.Description.Contains(filterValue));
@@ -49,6 +53,8 @@ namespace BugTracker.helpers.project
         public static IQueryable<Project> ApplySortingOptions(this IQueryable<Project> projectsQuery,
                                                               ProjectOrderOptions options)
         {
+
+            Console.WriteLine("Order option is: " + options.ToString());
             switch (options)
             {
                 case ProjectOrderOptions.ByDeadline:
@@ -65,6 +71,43 @@ namespace BugTracker.helpers.project
 
                 default:
                     return projectsQuery;
+            }
+        }
+
+        public static ProjectFilterOptions ConvertTStringToProjectFilterOption(this Filter filter)
+        {
+            switch (filter.FilterProperty.ToLower())
+            {
+                case "bydeadline":
+                    return ProjectFilterOptions.ByDeadline;
+                case "bydescription":
+                    return ProjectFilterOptions.ByDescription;
+                case "byowner":
+                    return ProjectFilterOptions.ByOwner;
+                case "byname":
+                    return ProjectFilterOptions.ByName;
+                default:
+                    return ProjectFilterOptions.Default;
+            }
+        }
+
+        public static ProjectOrderOptions ConvertTStringToProjectOrderOption(this string filter)
+        {
+            if (filter == null)
+            {
+                return ProjectOrderOptions.ByName;
+            }
+
+            switch (filter.ToLower())
+            {
+                case "bydeadline":
+                    return ProjectOrderOptions.ByDeadline;
+                case "bydeadlinedesc":
+                    return ProjectOrderOptions.ByDeadlineDesc;
+                case "bynamedesc":
+                    return ProjectOrderOptions.ByNameDesc;
+                default:
+                    return ProjectOrderOptions.ByName;
             }
         }
     }

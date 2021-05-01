@@ -16,7 +16,7 @@ namespace BugTracker.helpers
 
             if (pageNum > 1)
             {
-                query.Skip((pageNum - 1) * pageSize);
+                query.Skip(((pageNum - 1) * pageSize));
             }
 
             return query.Take(pageSize);

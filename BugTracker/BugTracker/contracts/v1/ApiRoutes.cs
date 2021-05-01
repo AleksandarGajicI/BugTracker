@@ -35,6 +35,7 @@ namespace BugTracker.contracts
             public const string Update = Base + "/projects";
             public const string Delete = Base + "/projects";
             public const string Create = Base + "/projects";
+            public const string GetPage = Base + "/projects/page";
         }
 
         public static class ProjectUserReq

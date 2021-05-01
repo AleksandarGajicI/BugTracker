@@ -1,8 +1,5 @@
-﻿using BugTracker.infrastructure.contracts.filterAndSort;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BugTracker.infrastructure.contracts.requests
 {
@@ -15,7 +12,7 @@ namespace BugTracker.infrastructure.contracts.requests
 
         public FindPageRequest(int pageSize = 3, int pageNum = 0)
         {
-            Filters = new List<FilterOption<TFilterOptions>>();
+            Filters = new List<TFilterOptions>();
 
             if (pageSize <= 0)
             {
@@ -35,7 +32,7 @@ namespace BugTracker.infrastructure.contracts.requests
             }
         }
 
-        public IEnumerable<FilterOption<TFilterOptions>> Filters { get; set; }
+        public IEnumerable<TFilterOptions> Filters { get; set; }
 
         public TSortingOptions SortingOption { get; set; }
     }

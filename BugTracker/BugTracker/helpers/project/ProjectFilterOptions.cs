@@ -10,6 +10,7 @@ namespace BugTracker.helpers.project
         ByDeadline, 
         ByName, 
         ByDescription, 
-        ByOwner
+        ByOwner,
+        Default
     }
 }

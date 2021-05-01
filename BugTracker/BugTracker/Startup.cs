@@ -27,6 +27,8 @@ using BugTracker.services.ticketStatus;
 using BugTracker.repositories.ticketStatus;
 using BugTracker.repositories.ticket;
 using BugTracker.services.ticket;
+using BugTracker.helpers.uri;
+using Microsoft.AspNetCore.Http;
 
 namespace BugTracker
 {
@@ -95,7 +97,17 @@ namespace BugTracker
             services.AddScoped<ITicketStatusService, TicketStatusService>();
             services.AddScoped<ITicketService, TicketService>();
 
+            services.AddSingleton<IUriService, UriService>(provider => 
+            {
+                var accessor = provider.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent(), "/");
+                return new UriService(absoluteUri);
+            });
+
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,6 +117,16 @@ namespace BugTracker
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //var swaggerOptions = new SwaggerOptions()
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BugTracker API V1");
+            });
+
 
             app.UseHttpsRedirection();
 

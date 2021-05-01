@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BugTracker.contracts.requests.filterAndOrdering;
 using BugTracker.contracts.requests.project;
 using BugTracker.dto;
 using BugTracker.dto.project;
@@ -152,7 +153,7 @@ namespace BugTracker.services.project
 
             foreach (var option in req.Filters)
             {
-                query.ApplyFilterOption(option.Option, option.Value);
+                //query.ApplyFilterOption(option.Option, option.Value);
             }
 
             query.ApplySortingOptions(req.SortingOption)
@@ -171,6 +172,36 @@ namespace BugTracker.services.project
             res.PageNum = req.PageNum;
             res.PageSize = req.PageSize;
             res.MaxPage = query.Count() / req.PageSize;
+            return res;
+        }
+
+        public PagedResponse<ProjectAbbreviatedDTO> FindPage(PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder)
+        {
+            var res = new PagedResponse<ProjectAbbreviatedDTO>();
+
+            var size = pagedQuery.PageSize == null ? 3 : (int)pagedQuery.PageSize;
+            var num = pagedQuery.PageNum == null ? 3 : (int)pagedQuery.PageNum;
+
+            var projectsQuery = _projectRepository.GetBasicQuery();
+            Console.WriteLine(filterAndOrder.Filters is null);
+
+            if (filterAndOrder != null && filterAndOrder.Filters != null)
+            {
+                Console.WriteLine("recognised the filters");
+                foreach (var filter in filterAndOrder.Filters)
+                {
+                    projectsQuery = projectsQuery
+                        .ApplyFilterOption(filter.ConvertTStringToProjectFilterOption(), filter.Value);
+                }
+
+                projectsQuery = projectsQuery
+                                .ApplySortingOptions(filterAndOrder.OrderBy.ConvertTStringToProjectOrderOption());
+            }
+
+            var projects =  projectsQuery.Page(num, size).ToList();
+
+            res.Success = true;
+            res.EntitiesDTO = _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projects);
             return res;
         }
 
