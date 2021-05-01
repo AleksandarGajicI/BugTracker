@@ -118,8 +118,6 @@ namespace BugTracker
                 app.UseDeveloperExceptionPage();
             }
 
-            //var swaggerOptions = new SwaggerOptions()
-
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>

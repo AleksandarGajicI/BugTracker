@@ -1,4 +1,5 @@
-﻿using BugTracker.infrastructure.domain;
+﻿using BugTracker.helpers;
+using BugTracker.infrastructure.domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,7 +43,7 @@ namespace BugTracker.model
 
         public override string ToString()
         {
-            var owner = ProjectUsersReq?.Where(x => x.Role?.RoleName == "PROJECT_MANAGER")
+            var owner = ProjectUsersReq?.Where(x => x.Role?.RoleName == MagicStrings.Roles.ProjectManager)
                                         .OrderBy(x => x.RequestSent)
                                         .Select(x => x.UserAssigned)
                                         .FirstOrDefault();
@@ -59,24 +60,33 @@ namespace BugTracker.model
 
         public override void Validate()
         {
+
+            var proj = new Project();
+
             if (string.IsNullOrEmpty(Name) || string.IsNullOrWhiteSpace(Name))
             {
-                AddBrokenRule(new BusinessRule("Name", "Project must have a name that is not null or empty character."));
+                AddBrokenRule(BusinessRule.Make<Project, string>
+                                            (proj => proj.Name, MagicStrings.Project.Error.Name));
+
             }
 
             if (Deadline == null)
             {
-                AddBrokenRule(new BusinessRule("Deadline", "Project must have a deadline set."));
+                AddBrokenRule(BusinessRule.Make<Project, DateTime>(proj => proj.Deadline, 
+                                                                   MagicStrings.Project.Error.Deadline));
             }
 
             if (Id == null)
             {
-                AddBrokenRule(new BusinessRule("Id", "Project must have an unique identifier."));
+                AddBrokenRule(BusinessRule.Make<Project, Guid>(proj => proj.Id,
+                                                               MagicStrings.Project.Error.Id));
             }
 
-            if (ProjectUsersReq.Count > 0 && ProjectUsersReq.Where(pur => pur.Role.RoleName == "PROJECT_MANAGER") == null)
+            if (ProjectUsersReq.Count > 0 && ProjectUsersReq
+                                            .Where(pur => pur.Role.RoleName == MagicStrings.Roles.ProjectManager) == null)
             {
-                AddBrokenRule(new BusinessRule("UsersOnProject", "Project must have a Project Manager."));
+                AddBrokenRule(BusinessRule.Make<Project, ICollection<ProjectUserReq>>(proj => proj.ProjectUsersReq,
+                                                                                      MagicStrings.Project.Error.UsersOnProject));
             }
 
         }

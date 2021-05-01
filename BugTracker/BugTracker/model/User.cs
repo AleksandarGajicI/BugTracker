@@ -1,4 +1,5 @@
-﻿using BugTracker.infrastructure.domain;
+﻿using BugTracker.helpers;
+using BugTracker.infrastructure.domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -55,29 +56,46 @@ namespace BugTracker.model
 
         public override void Validate()
         {
+            var u = new User();
+
+            if (Id == null)
+            { 
+                AddBrokenRule(BusinessRule.Make<User, Guid>(u => u.Id,
+                                                              MagicStrings.Users.Erorr.Id));
+            }
+
             if (string.IsNullOrEmpty(Email) || Email == " ")
             {
-                AddBrokenRule(new BusinessRule("Email", "Invalid Email!"));
+                AddBrokenRule(BusinessRule.Make<User, string>(u => u.Email, MagicStrings.Users.Erorr.Email));
             }
 
             if (string.IsNullOrEmpty(UserName) || UserName == " ")
             {
-                AddBrokenRule(new BusinessRule("UserName", "Invalid UserName!"));
+                AddBrokenRule(BusinessRule.Make<User, string>(u => u.UserName, 
+                                                              MagicStrings.Users.Erorr.UserName));
             }
 
             if (string.IsNullOrEmpty(FirstName) || FirstName == " ")
             {
-                AddBrokenRule(new BusinessRule("FirstName", "Invalid FirstName!"));
+                AddBrokenRule(BusinessRule.Make<User, string>(u => u.FirstName,
+                                                              MagicStrings.Users.Erorr.FirstName));
             }
 
             if (string.IsNullOrEmpty(LastName) || LastName == " ")
             {
-                AddBrokenRule(new BusinessRule("LastName", "Invalid LastName!"));
+                AddBrokenRule(BusinessRule.Make<User, string>(u => u.LastName,
+                                                              MagicStrings.Users.Erorr.LastName));
             }
 
-            if (DateTime.Compare(Joined, DateTime.Now) > 0)
+            if (Joined == null)
+            { 
+                AddBrokenRule(BusinessRule.Make<User, DateTime>(u => u.Joined,
+                                                              MagicStrings.Users.Erorr.Joined));
+            }
+            else if (DateTime.Compare(Joined, DateTime.Now) > 0)
             {
-                AddBrokenRule(new BusinessRule("Joined", "User can't join in the future."));
+                AddBrokenRule(BusinessRule.Make<User, DateTime>(u => u.Joined,
+                                                              MagicStrings.Users.Erorr.JoinedInFuture));
             }
         }
     }
