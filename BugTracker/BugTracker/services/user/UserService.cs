@@ -35,33 +35,14 @@ namespace BugTracker.services.user
         {
             var res = new CreateUserWithTokenResponse();
                 
-
-
             var user = new User(req.Email, req.UserName, req.FirstName, req.LastName);
 
             user.Validate();
 
             if (user.GetBrokenRules().Count > 0)
             {
-                return (CreateUserWithTokenResponse)res.ReturnErrorResponseWithMultiple(user.GetBrokenRules());
-            }
-
-            var userExists = _authService.FindByEmailOrUserName(req.Email, req.UserName).GetAwaiter().GetResult();
-
-            if (userExists)
-            {
                 return (CreateUserWithTokenResponse)
-                    res.ReturnErrorResponseWith("User with the given user name or email already exists");
-            }
-
-            string token;
-            try
-            {
-                token = _authService.Register(user.UserName, user.Email, req.Password).Result;
-            }
-            catch (Exception ex)
-            {
-                return (CreateUserWithTokenResponse) res.ReturnErrorResponseWith(ex.Message);
+                            res.ReturnErrorResponseWithMultiple(user.GetBrokenRules());
             }
 
             _userRepository.Save(user);
@@ -72,9 +53,20 @@ namespace BugTracker.services.user
             }
             catch (Exception ex)
             {
-                _authService.DeleteUser(user.UserName);
+                return (CreateUserWithTokenResponse)res.ReturnErrorResponseWith(ex.Message);
+            }
 
-                return (CreateUserWithTokenResponse) res.ReturnErrorResponseWith(ex.Message);
+            string token = _authService.Register(user, req.Password).GetAwaiter().GetResult();
+
+            if (token == MagicStrings.Users.Error.AlreadyExists ||
+                token == MagicStrings.Users.Error.Signup)
+            {
+
+                _userRepository.Delete(user);
+                _uow.Commit();
+
+                return (CreateUserWithTokenResponse)
+                            res.ReturnErrorResponseWith(token);
             }
             
             res.Success = true;
@@ -92,12 +84,14 @@ namespace BugTracker.services.user
 
             if (user == null)
             {
-                return (DeleteResponse) res.ReturnErrorResponseWith("User not found!");
+                return (DeleteResponse)
+                            res.ReturnErrorResponseWith(MagicStrings.Users.Error.NotFound);
             }
 
             try
             {
                 _userRepository.Delete(user);
+                _authService.DeleteUser(user.Email);
                 _uow.Commit();
             }
             catch (Exception ex)
@@ -129,7 +123,8 @@ namespace BugTracker.services.user
 
             if (user == null)
             {
-                return (FindByIdResponse<UserDTO>) res.ReturnErrorResponseWith("User not found");
+                return (FindByIdResponse<UserDTO>) 
+                            res.ReturnErrorResponseWith(MagicStrings.Users.Error.NotFound);
             }
 
             res.EntityDTO = _mapper.Map<User, UserDTO>(user);
@@ -137,11 +132,27 @@ namespace BugTracker.services.user
             return res;
         }
 
+        public LoginResponse Login(LoginRequest req)
+        {
+            var res = new LoginResponse();
+            var jwt = _authService.Login(req.Email, req.Password).GetAwaiter().GetResult();
+
+            if (jwt == MagicStrings.Users.Error.Login || 
+                jwt == MagicStrings.Users.Error.NotFound)
+            {
+                return (LoginResponse)res.ReturnErrorResponseWith(jwt);
+            }
+
+            res.Success = true;
+            res.Token = jwt;
+            return res;
+        }
+
         public ResponseBase Logout(LogoutRequest req)
         {
             var res = new ResponseBase();
 
-            _authService.Logout(req.UserName);
+           // _authService.Logout(req.UserName);
             res.Success = true;
             return res;
         }

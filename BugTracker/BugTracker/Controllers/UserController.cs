@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BugTracker.contracts;
+﻿using BugTracker.contracts;
 using BugTracker.contracts.requests.user;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.user;
@@ -71,6 +67,20 @@ namespace BugTracker.Controllers
             if (!res.Success)
             {
                 return NotFound(res);
+            }
+
+            return Ok(res);
+        }
+
+        [HttpPost]
+        [Route(ApiRoutes.Users.Login)]
+        public IActionResult Login(LoginRequest req)
+        {
+            var res = _userService.Login(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
             }
 
             return Ok(res);

@@ -1,4 +1,6 @@
 ﻿using BugTracker.auth.domain;
+using BugTracker.helpers;
+using BugTracker.model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -13,47 +15,43 @@ namespace BugTracker.auth.service
     public class AuthService : IAuthService
     {
         private readonly UserManager<UserAuth> _userManager;
-        private readonly SignInManager<UserAuth> _signInManager;
 
-        public AuthService(UserManager<UserAuth> userManager, SignInManager<UserAuth> signInManager)
+        public AuthService(UserManager<UserAuth> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
         }
-        public async Task<bool> FindByEmailOrUserName(string email, string userName)
+        public async Task<string> Login(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user != null)
+            if(user == null)
             {
-                return true;
+                return MagicStrings.Users.Error.NotFound;
+            }
+            var userHasValidPassword = await _userManager.CheckPasswordAsync(user, password);
+
+            if (!userHasValidPassword)
+            {
+                return MagicStrings.Users.Error.Login;
             }
 
-            user = await _userManager.FindByNameAsync(userName);
-
-            return user != null;
+            return GetJWTTokenForUser(user);
         }
 
-        public async Task<string> Login(string userName, string email, string password)
+        public async Task<string> Register(User user, string password)
         {
-            var success = await FindByEmailOrUserName(email, userName);
+            var existingUser = await _userManager.FindByEmailAsync(user.Email);
 
-            if (!success)
+            if (existingUser != null)
             {
-                return "false";
+                return MagicStrings.Users.Error.AlreadyExists;
             }
 
-            var result = await _signInManager.PasswordSignInAsync(userName, password, false, false);
-
-            return GetJWTTokenForUserName(userName);
-        }
-
-        public async Task<string> Register(string userName, string email, string password)
-        {
             var authUser = new UserAuth()
             {
-                UserName = userName,
-                Email = email,
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                UserName = user.UserName,
                 EmailConfirmed = false
             };
 
@@ -61,35 +59,31 @@ namespace BugTracker.auth.service
 
             if (!result.Succeeded)
             {
-                throw new Exception("Error signing up user!");
+                return MagicStrings.Users.Error.Signup;
             }
 
 
-            return GetJWTTokenForUserName(userName);
+            return GetJWTTokenForUser(authUser);
         }
 
-        public void DeleteUser(string userName)
+        public void DeleteUser(string email)
         {
-            var user = _userManager.FindByNameAsync(userName).Result;
+            var user = _userManager.FindByEmailAsync(email).Result;
             if (user != null)
             {
                 _userManager.DeleteAsync(user).GetAwaiter().GetResult();
             }
         }
-
-        public async void Logout(string userName)
-        {
-           await _signInManager.SignOutAsync();
-        }
-
-        private string GetJWTTokenForUserName(string userName)
+        private string GetJWTTokenForUser(UserAuth user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(BugTrackerJWTConstants.Key));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new Claim[]
             {
-               new Claim("UserName", userName),
-               new Claim("Id", "testId")
+               new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+               new Claim(JwtRegisteredClaimNames.Email, user.Email),
+               new Claim("Id", user.Id)
             };
 
             var token = new JwtSecurityToken(
@@ -97,7 +91,7 @@ namespace BugTracker.auth.service
                 BugTrackerJWTConstants.Audience,
                 claims,
                 null,
-                DateTime.UtcNow.AddSeconds(30),
+                DateTime.UtcNow.AddMinutes(5),
                 credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);

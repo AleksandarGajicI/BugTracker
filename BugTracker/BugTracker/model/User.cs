@@ -61,41 +61,41 @@ namespace BugTracker.model
             if (Id == null)
             { 
                 AddBrokenRule(BusinessRule.Make<User, Guid>(u => u.Id,
-                                                              MagicStrings.Users.Erorr.Id));
+                                                              MagicStrings.Users.Error.Id));
             }
 
             if (string.IsNullOrEmpty(Email) || Email == " ")
             {
-                AddBrokenRule(BusinessRule.Make<User, string>(u => u.Email, MagicStrings.Users.Erorr.Email));
+                AddBrokenRule(BusinessRule.Make<User, string>(u => u.Email, MagicStrings.Users.Error.Email));
             }
 
             if (string.IsNullOrEmpty(UserName) || UserName == " ")
             {
                 AddBrokenRule(BusinessRule.Make<User, string>(u => u.UserName, 
-                                                              MagicStrings.Users.Erorr.UserName));
+                                                              MagicStrings.Users.Error.UserName));
             }
 
             if (string.IsNullOrEmpty(FirstName) || FirstName == " ")
             {
                 AddBrokenRule(BusinessRule.Make<User, string>(u => u.FirstName,
-                                                              MagicStrings.Users.Erorr.FirstName));
+                                                              MagicStrings.Users.Error.FirstName));
             }
 
             if (string.IsNullOrEmpty(LastName) || LastName == " ")
             {
                 AddBrokenRule(BusinessRule.Make<User, string>(u => u.LastName,
-                                                              MagicStrings.Users.Erorr.LastName));
+                                                              MagicStrings.Users.Error.LastName));
             }
 
             if (Joined == null)
             { 
                 AddBrokenRule(BusinessRule.Make<User, DateTime>(u => u.Joined,
-                                                              MagicStrings.Users.Erorr.Joined));
+                                                              MagicStrings.Users.Error.Joined));
             }
             else if (DateTime.Compare(Joined, DateTime.Now) > 0)
             {
                 AddBrokenRule(BusinessRule.Make<User, DateTime>(u => u.Joined,
-                                                              MagicStrings.Users.Erorr.JoinedInFuture));
+                                                              MagicStrings.Users.Error.JoinedInFuture));
             }
         }
     }

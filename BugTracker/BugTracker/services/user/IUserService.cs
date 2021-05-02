@@ -14,5 +14,7 @@ namespace BugTracker.services.user
     public interface IUserService : IService<UserDTO, UserDTO, RegisterUserRequest, UpdateUserRequest>
     {
         public ResponseBase Logout(LogoutRequest req);
+
+        public LoginResponse Login(LoginRequest req);
     }
 }

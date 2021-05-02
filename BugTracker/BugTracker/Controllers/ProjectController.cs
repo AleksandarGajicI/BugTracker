@@ -8,6 +8,8 @@ using BugTracker.infrastructure.contracts.requests;
 using BugTracker.model;
 using BugTracker.repositories.project;
 using BugTracker.services.project;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracker.Controllers
@@ -26,6 +28,7 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Projects.GetAll)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetProjects() 
         {
             var res = _projectService.FindAll();

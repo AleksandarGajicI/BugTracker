@@ -20,6 +20,7 @@ namespace BugTracker.contracts
             public const string Register = Base + "/register";
             public const string Update = Base + "/users";
             public const string Delete = Base + "/users";
+            public const string Login = Base + "/users/login";
         }
 
         public static class Roles

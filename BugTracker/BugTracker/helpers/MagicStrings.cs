@@ -25,7 +25,7 @@ namespace BugTracker.helpers
 
         public class Users
         {
-            public class Erorr
+            public class Error
             {
                 public const string Id = "User must have an unique identifier!";
                 public const string Email = "Invalid Email!";
@@ -34,6 +34,10 @@ namespace BugTracker.helpers
                 public const string LastName = "Invalid LastName!";
                 public const string JoinedInFuture = "User can't join in the future!";
                 public const string Joined = "User must have a joined property defined!";
+                public const string Signup = "Error signing up!";
+                public const string Login = "Error loging in!";
+                public const string AlreadyExists = "User already exists!";
+                public const string NotFound = "User not found!";
             }
         }
     }
