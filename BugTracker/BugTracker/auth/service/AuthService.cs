@@ -1,10 +1,7 @@
-﻿using BugTracker.auth;
-using BugTracker.auth.domain;
-using BugTracker.auth.service;
+﻿using BugTracker.auth.domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -91,7 +88,8 @@ namespace BugTracker.auth.service
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new Claim[]
             {
-               new Claim("User", userName)
+               new Claim("UserName", userName),
+               new Claim("Id", "testId")
             };
 
             var token = new JwtSecurityToken(
