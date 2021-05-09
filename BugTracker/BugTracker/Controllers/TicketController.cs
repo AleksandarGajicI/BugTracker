@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BugTracker.contracts;
+using BugTracker.contracts.requests.ticket;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.ticket;
 using Microsoft.AspNetCore.Http;
@@ -38,6 +39,13 @@ namespace BugTracker.Controllers
                 BadRequest(res);
             }
             return Ok(res);
+        }
+
+        [HttpGet]
+        [Route(ApiRoutes.Tickets.Create)]
+        public IActionResult Create(CreateTicketRequest req)
+        {
+            return Ok();
         }
     }
 }

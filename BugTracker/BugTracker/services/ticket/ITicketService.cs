@@ -1,4 +1,5 @@
-﻿using BugTracker.dto.ticket;
+﻿using BugTracker.contracts.requests.ticket;
+using BugTracker.dto.ticket;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.model;
@@ -11,5 +12,7 @@ namespace BugTracker.services.ticket
         public FindByIdResponse<TicketDTO> GetById(FindByIdRequest req);
 
         public PagedResponse<TicketAbbreviatedDTO> FindPage();
+
+        public CreateResponse<TicketDTO> Create(CreateTicketRequest req);
     }
 }

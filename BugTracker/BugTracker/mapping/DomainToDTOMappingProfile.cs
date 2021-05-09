@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BugTracker.contracts.requests.ticket;
 using BugTracker.dto;
 using BugTracker.dto.project;
 using BugTracker.dto.ProjectUserReq;
@@ -21,6 +22,45 @@ namespace BugTracker.mapping
             CreateMap<Role, RoleDTO>();
             CreateMap<Project, ProjectAbbreviatedDTO>();
 
+            IncludeProjectUserReqMapping();
+            
+            IncludeProjectMapping();
+            
+            CreateMap<TicketStatus, TicketStatusDTO>();
+
+            IncludeTicketMapping();
+    
+        }
+
+        private void IncludeTicketMapping()
+        {
+            CreateMap<Ticket, TicketAbbreviatedDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status));
+
+            CreateMap<Ticket, TicketDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
+                .ForMember(dest => dest.Reporter, opt => opt.MapFrom(src => src.Reporter.UserAssigned.UserName))
+                .ForMember(dest => dest.RecentComments, opt => opt.MapFrom(src => src.Comments));
+
+            CreateMap<Ticket, TicketDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+
+            CreateMap<CreateTicketRequest, Ticket>();
+        }
+
+        private void IncludeProjectMapping()
+        {
+            CreateMap<Project, ProjectDTO>()
+                .ForMember(dest => dest.UsersOnProject,
+                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)))
+                .ForMember(dest => dest.PendingRequests,
+                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == false)));
+
+        }
+
+        private void IncludeProjectUserReqMapping()
+        {
             CreateMap<ProjectUserReq, ProjectUserDTO>()
                 .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
@@ -34,22 +74,6 @@ namespace BugTracker.mapping
                 .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Accepted));
 
-
-            CreateMap<Project, ProjectDTO>()
-                .ForMember(dest => dest.UsersOnProject, 
-                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)))
-                .ForMember(dest => dest.PendingRequests,
-                            opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == false)));
-
-            CreateMap<TicketStatus, TicketStatusDTO>();
-
-            CreateMap<Ticket, TicketAbbreviatedDTO>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status));
-
-            CreateMap<Ticket, TicketDTO>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
-                .ForMember(dest => dest.Reporter, opt => opt.MapFrom(src => src.Reporter.UserAssigned.UserName))
-                .ForMember(dest => dest.RecentComments, opt => opt.MapFrom(src => src.Comments));
         }
     }
 }

@@ -5,7 +5,6 @@ using BugTracker.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace BugTracker.repositories.projectUserRequests
@@ -26,6 +25,8 @@ namespace BugTracker.repositories.projectUserRequests
                 .ToList();
         }
 
+
+
         public override ProjectUserReq FindById(Guid id)
         {
             return _table.Where(pur => pur.Id == id)
@@ -33,6 +34,13 @@ namespace BugTracker.repositories.projectUserRequests
                 .Include(pur => pur.Role)
                 .Include(pur => pur.UserAssigned)
                 .FirstOrDefault();
+        }
+
+        public ProjectUserReq FindProjectUserFor(Guid userId, Guid projectId)
+        {
+            return _table.Where(uop => uop.UserAssignedId == userId &&
+                                uop.ProjectId == projectId)
+                         .FirstOrDefault();
         }
     }
 }
