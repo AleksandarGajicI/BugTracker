@@ -2,7 +2,10 @@
 using BugTracker.contracts.requests.user;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.user;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace BugTracker.Controllers
 {
@@ -60,9 +63,23 @@ namespace BugTracker.Controllers
 
         [HttpDelete]
         [Route(ApiRoutes.Users.Delete)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Delete([FromBody] DeleteRequest req)
         {
-            var res = _userService.Delete(req);
+            
+
+            var httpUser = HttpContext.User;
+
+            if (httpUser == null)
+            {
+                return Unauthorized();
+            }
+
+            var claim = httpUser.Claims.Single(x => x.Type == "Id");
+
+            var id = claim.Value;
+
+            var res = _userService.Delete(req, id);
 
             if (!res.Success)
             {

@@ -71,6 +71,7 @@ namespace BugTracker.auth.service
             var user = _userManager.FindByEmailAsync(email).Result;
             if (user != null)
             {
+                Console.WriteLine("found user, deleting him from database.");
                 _userManager.DeleteAsync(user).GetAwaiter().GetResult();
             }
         }

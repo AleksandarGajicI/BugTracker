@@ -16,5 +16,8 @@ namespace BugTracker.services.user
         public ResponseBase Logout(LogoutRequest req);
 
         public LoginResponse Login(LoginRequest req);
+
+        public DeleteResponse Delete(DeleteRequest req, string userId);
+
     }
 }

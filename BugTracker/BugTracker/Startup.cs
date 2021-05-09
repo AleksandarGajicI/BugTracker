@@ -1,9 +1,5 @@
-using BugTracker.database;
-using BugTracker.auth.database;
-using BugTracker.auth.domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using BugTracker.auth;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using BugTracker.helpers.dependencyInjection;
 
 namespace BugTracker

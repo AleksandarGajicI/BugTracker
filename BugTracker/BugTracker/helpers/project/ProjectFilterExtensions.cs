@@ -78,13 +78,13 @@ namespace BugTracker.helpers.project
         {
             switch (filter.FilterProperty.ToLower())
             {
-                case "bydeadline":
+                case "deadline":
                     return ProjectFilterOptions.ByDeadline;
-                case "bydescription":
+                case "description":
                     return ProjectFilterOptions.ByDescription;
-                case "byowner":
+                case "owner":
                     return ProjectFilterOptions.ByOwner;
-                case "byname":
+                case "name":
                     return ProjectFilterOptions.ByName;
                 default:
                     return ProjectFilterOptions.Default;

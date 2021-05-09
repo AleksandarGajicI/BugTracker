@@ -38,6 +38,7 @@ namespace BugTracker.helpers
                 public const string Login = "Error loging in!";
                 public const string AlreadyExists = "User already exists!";
                 public const string NotFound = "User not found!";
+                public const string Unauthorized = "User is unauthorized";
             }
         }
     }

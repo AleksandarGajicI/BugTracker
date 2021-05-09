@@ -11,6 +11,7 @@ using BugTracker.repositories.user;
 using System;
 using System.Collections.Generic;
 using BugTracker.helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace BugTracker.services.user
 {
@@ -80,6 +81,7 @@ namespace BugTracker.services.user
         {
             var res = new DeleteResponse();
 
+
             var user = _userRepository.FindById(req.Id);
 
             if (user == null)
@@ -99,6 +101,44 @@ namespace BugTracker.services.user
                 return (DeleteResponse) res.ReturnErrorResponseWith(ex.Message);
             }
 
+            _authService.DeleteUser(user.UserName);
+
+            res.Success = true;
+            res.IdDeleted = req.Id;
+            return res;
+        }
+
+
+        public DeleteResponse Delete(DeleteRequest req, string userId)
+        {
+            var res = new DeleteResponse();
+
+
+            var user = _userRepository.FindById(req.Id);
+
+            if (user == null)
+            {
+                return (DeleteResponse)
+                            res.ReturnErrorResponseWith(MagicStrings.Users.Error.NotFound);
+            }
+
+            if (!user.Id.ToString().ToLower().Equals(userId.ToString().ToLower()))
+            {
+                return (DeleteResponse)
+                            res.ReturnErrorResponseWith(MagicStrings.Users.Error.Unauthorized);
+            }
+
+            try
+            {
+                _userRepository.Delete(user);
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message);
+            }
+
+            Console.WriteLine("deleting in auth");
             _authService.DeleteUser(user.UserName);
 
             res.Success = true;
