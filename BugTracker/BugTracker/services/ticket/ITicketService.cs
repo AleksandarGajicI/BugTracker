@@ -2,7 +2,7 @@
 using BugTracker.dto.ticket;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
-using BugTracker.model;
+using System;
 
 namespace BugTracker.services.ticket
 {
@@ -14,5 +14,9 @@ namespace BugTracker.services.ticket
         public PagedResponse<TicketAbbreviatedDTO> FindPage();
 
         public CreateResponse<TicketDTO> Create(CreateTicketRequest req);
+
+        public DeleteResponse Delete(Guid id);
+
+        public UpdateResponse<TicketDTO> Update(Guid id, UpdateTicketRequest req);
     }
 }

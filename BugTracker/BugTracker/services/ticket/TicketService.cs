@@ -7,6 +7,7 @@ using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
+using BugTracker.model.domainServices;
 using BugTracker.repositories.project;
 using BugTracker.repositories.projectUserRequests;
 using BugTracker.repositories.ticket;
@@ -29,6 +30,7 @@ namespace BugTracker.services.ticket
         private readonly ITicketStatusRepository _ticketStatusRepository;
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly TicketDomainService _ticketDomainService = new TicketDomainService();
 
         public TicketService(ITicketRepository ticketRepository,
                                 IProjectRepository projectRepository,
@@ -151,6 +153,107 @@ namespace BugTracker.services.ticket
 
             res.Success = true;
             res.EntityDTO = _mapper.Map<Ticket, TicketDTO>(ticket);
+
+            return res;
+        }
+
+        public DeleteResponse Delete(Guid id)
+        {
+            var res = new DeleteResponse();
+
+            var ticket = _ticketRepository.FindById(id);
+
+            if (ticket == null)
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith("Ticket not found");
+            }
+
+            _ticketRepository.Delete(ticket);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message); 
+            }
+
+            res.IdDeleted = ticket.Id;
+            res.Success = true;
+
+            return res;
+        }
+
+        public UpdateResponse<TicketDTO> Update(Guid id, UpdateTicketRequest req)
+        {
+            var res = new UpdateResponse<TicketDTO>();
+
+            var type = req.Type.ConvertToTicketType();
+
+            var ticket = _ticketRepository.FindById(id);
+
+            if (ticket == null)
+            {
+                return (UpdateResponse<TicketDTO>)res.ReturnErrorResponseWith("Ticket not found");
+            }
+
+            var user = _userRepository.FindById(req.UserId);
+
+            if (user == null)
+            {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWith("User not found");
+            }
+
+            var histories = _ticketDomainService
+                                .GetHistoriesFor(ticket,
+                                                 user,
+                                                 req.Title,
+                                                 req.Description,
+                                                 req.Deadline,
+                                                 type);
+
+
+            if (type != TicketType.UNDEFINED)
+            {
+                ticket.Type = type;
+            }
+
+
+            ticket.Title = req.Title;
+            ticket.Description = req.Description;
+            ticket.Deadline = req.Deadline;
+
+            ticket.Validate();
+
+            if (ticket.GetBrokenRules().Count > 0)
+            {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWithMultiple(ticket.GetBrokenRules());
+            }
+
+            ticket.Updated = DateTime.Now;
+
+            foreach(var history in histories) 
+            { 
+                //TODO save all history
+            }
+
+            _ticketRepository.Save(ticket);
+
+            try
+            {
+                _uow.Commit();
+            }
+            catch (Exception ex)
+            {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWith(ex.Message);
+            }
+
+            res.EntityDTO = _mapper.Map<Ticket, TicketDTO>(ticket);
+            res.Success = true;
 
             return res;
         }

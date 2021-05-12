@@ -45,7 +45,13 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Tickets.Create)]
         public IActionResult Create(CreateTicketRequest req)
         {
-            return Ok();
+            var res = _ticketService.Create(req);
+
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+            return Ok(res);
         }
     }
 }
