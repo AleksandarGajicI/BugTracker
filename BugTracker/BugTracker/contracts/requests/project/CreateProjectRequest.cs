@@ -12,7 +12,6 @@ namespace BugTracker.contracts.requests.project
         public DateTime Deadline { get; set; }
 
         public Guid OwnerId { get; set; }
-        public string UserName { get; set; }
 
         public string Description { get; set; }
     }

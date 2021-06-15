@@ -32,9 +32,9 @@ namespace BugTracker.contracts
         public static class Projects
         {
             public const string GetAll = Base + "/projects";
-            public const string GetById = Base + "/projects/id/";
-            public const string Update = Base + "/projects";
-            public const string Delete = Base + "/projects";
+            public const string GetById = Base + "/projects/{id}";
+            public const string Update = Base + "/projects/{id}";
+            public const string Delete = Base + "/projects/{id}";
             public const string Create = Base + "/projects";
             public const string GetPage = Base + "/projects/page";
         }

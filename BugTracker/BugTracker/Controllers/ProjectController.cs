@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using BugTracker.contracts;
+﻿using BugTracker.contracts;
 using BugTracker.contracts.requests.filterAndOrdering;
 using BugTracker.contracts.requests.project;
 using BugTracker.helpers.uri;
 using BugTracker.infrastructure.contracts.requests;
-using BugTracker.model;
-using BugTracker.repositories.project;
 using BugTracker.services.project;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BugTracker.Controllers
 {
@@ -28,8 +23,7 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Projects.GetAll)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult GetProjects() 
+        public IActionResult GetProjects()
         {
             var res = _projectService.FindAll();
             return Ok(res);
@@ -37,9 +31,9 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Projects.GetById)]
-        public IActionResult GetProjectById([FromBody] FindByIdRequest req)
+        public IActionResult GetProjectById(Guid id)
         {
-            var res = _projectService.FindById(req);
+            var res = _projectService.FindById(id);
 
             if (!res.Success)
             {
@@ -50,7 +44,7 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [Route(ApiRoutes.Projects.Create)]
-        public IActionResult AddProject([FromBody] CreateProjectRequest project) 
+        public IActionResult AddProject([FromBody] CreateProjectRequest project)
         {
             var res = _projectService.Create(project);
 
@@ -59,14 +53,14 @@ namespace BugTracker.Controllers
                 return BadRequest(res);
             }
 
-            return Ok();
+            return Ok(res);
         }
 
         [HttpPut]
         [Route(ApiRoutes.Projects.Update)]
-        public IActionResult UpdateProject([FromBody]UpdateProjectRequest req)
+        public IActionResult UpdateProject(Guid id, [FromBody] UpdateProjectRequest req)
         {
-            var res = _projectService.Update(req);
+                var res = _projectService.Update(id, req);
 
             if (!res.Success)
             {
@@ -77,9 +71,9 @@ namespace BugTracker.Controllers
 
         [HttpDelete]
         [Route(ApiRoutes.Projects.Delete)]
-        public IActionResult DeleteProject(DeleteRequest req) 
+        public IActionResult DeleteProject(Guid id)
         {
-            var res =_projectService.Delete(req);
+            var res = _projectService.Delete(id);
 
             if (!res.Success)
             {
@@ -90,7 +84,7 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Projects.GetPage)]
-        public IActionResult GetPage([FromQuery] PagedQuery pageQuery,[FromQuery] FilterAndOrderQuery filterAndOrderQuery)
+        public IActionResult GetPage([FromQuery] PagedQuery pageQuery, [FromQuery] FilterAndOrderQuery filterAndOrderQuery)
         {
             var res = _projectService.FindPage(pageQuery, filterAndOrderQuery);
 

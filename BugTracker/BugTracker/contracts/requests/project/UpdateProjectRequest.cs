@@ -8,7 +8,6 @@ namespace BugTracker.contracts.requests.project
 {
     public class UpdateProjectRequest : RequestBase
     {
-        public Guid Id { get; set; }
         public Guid OwnerId { get; set; }
         public string Name { get; set; }
         public DateTime Deadline { get; set; }

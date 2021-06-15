@@ -93,11 +93,11 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public DeleteResponse Delete(DeleteRequest req)
+        public DeleteResponse Delete(Guid id)
         {
             var res = new DeleteResponse();
 
-            var project = _projectRepository.FindById(req.Id);
+            var project = _projectRepository.FindById(id);
 
             if (project == null)
             {
@@ -131,11 +131,11 @@ namespace BugTracker.services.project
 
         }
 
-        public FindByIdResponse<ProjectDTO> FindById(FindByIdRequest req)
+        public FindByIdResponse<ProjectDTO> FindById(Guid id)
         {
             var res = new FindByIdResponse<ProjectDTO>();
 
-            var project = _projectRepository.FindById(req.Id);
+            var project = _projectRepository.FindById(id);
             if (project is null)
             {
                 return (FindByIdResponse<ProjectDTO>) res.ReturnErrorResponseWith("Project not found");
@@ -205,11 +205,11 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public UpdateResponse<ProjectDTO> Update(UpdateProjectRequest req)
+        public UpdateResponse<ProjectDTO> Update(Guid id, UpdateProjectRequest req)
         {
             var res = new UpdateResponse<ProjectDTO>();
 
-            var project = _projectRepository.FindById(req.Id);
+            var project = _projectRepository.FindById(id);
 
             if (project == null)
             {

@@ -40,6 +40,8 @@ namespace BugTracker
                     };
                 });
 
+            services.AddCustomCorsPolicy();
+
             services.AddControllers();
 
             services.AddRepositories();
@@ -66,8 +68,9 @@ namespace BugTracker
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BugTracker API V1");
             });
 
+            app.UseCors("AllAccess");
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
