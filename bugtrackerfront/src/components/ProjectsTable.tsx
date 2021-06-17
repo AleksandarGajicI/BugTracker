@@ -3,17 +3,22 @@ import Project from "./models/Project";
 import Pagination from "./Pagination";
 import {useEffect, useState} from 'react';
 import Actions from "./actions/Actions";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { CircularProgress } from "@material-ui/core";
 
 
 function ProjectTable() {
 
     const [projects, setProjects] = useState<Project[]>([]);
     const history = useHistory()
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
+
+        setLoading(true)
         Actions.ProjectActions.all().then(response => {
             setProjects(response)
+            setLoading(false)
         })
     }, [])
 
@@ -25,10 +30,17 @@ function ProjectTable() {
         alert(prevPage)
     }
 
-    function deleteProject(id: string) {
-        Actions.ProjectActions.delete(id).then(response => {
-            console.log(response)
-        })
+    function deleteProject(id: string, e: any) {
+        e.stopPropagation()
+
+        const confirmed = window.confirm("Are you sure you want to delete this?")
+
+        if(confirmed) {
+            Actions.ProjectActions.delete(id).then(response => {
+                console.log(response)
+            })
+        }
+
     }
 
     function redirect(id: string) {
@@ -38,6 +50,21 @@ function ProjectTable() {
     function redirectToEdit(id: string, e: any) {
         e.stopPropagation()
         history.push("/projects/edit/" + id)
+    }
+
+    if(loading) {
+        return (
+            <div
+            style={{
+                display: "flex",
+                minWidth: "100vh",
+                justifyContent: "center",
+                margin: "5em"
+            }}
+            >
+                <CircularProgress style={{alignSelf: "center"}}/>
+            </div>
+        )
     }
 
     return (
@@ -75,7 +102,7 @@ function ProjectTable() {
                                     </Button>
                                     <Button 
                                     color="secondary" 
-                                    onClick={() => deleteProject(project.id)}
+                                    onClick={(e) => deleteProject(project.id, e)}
                                     >
                                         DELETE
                                     </Button>

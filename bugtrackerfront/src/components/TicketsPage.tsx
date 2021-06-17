@@ -1,9 +1,12 @@
+import Layout from "./Layout"
+import TicketsTable from "./TicketsTable"
 
 function TicketsPage() {
     return (
-        <div>
-            Tickets page
-        </div>
+        <Layout>
+
+            <TicketsTable withPagination={true}/>
+        </Layout>
     )
 }
 export default TicketsPage

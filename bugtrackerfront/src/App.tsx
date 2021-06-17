@@ -9,6 +9,9 @@ import RequestsPage from './components/RequestsPage';
 import UsersPage from './components/UsersPage';
 import EditProjectPage from './components/EditProjectPage';
 import ProjectPage from './components/ProjectPage';
+import InviteUserPage from './components/InviteUserPage';
+import TicketsPage from './components/TicketsPage';
+import TicketPage from './components/TicketPage';
 
 
 
@@ -26,7 +29,10 @@ function App() {
       <Route exact path="/projects/:id" component={ProjectPage}/>
       <Route path="/projects/edit/:id" component={EditProjectPage}/>
       <Route path="/requests" component={RequestsPage}/>
-      <Route path="/users" component={UsersPage}/>
+      <Route exact path="/users" component={UsersPage}/>
+      <Route path="/users/invite/:id" component={InviteUserPage}/>
+      <Route exact path="/tickets" component={TicketsPage}/>
+      <Route path="/tickets/:id" component={TicketPage}/>
     </div>
   );
 }
