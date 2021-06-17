@@ -66,10 +66,10 @@ namespace BugTracker.services.ticket
             return res;
         }
 
-        public FindByIdResponse<TicketDTO> GetById(FindByIdRequest req)
+        public FindByIdResponse<TicketDTO> GetById(Guid id)
         {
             var res = new FindByIdResponse<TicketDTO>();
-            var ticket = _ticketRepository.FindById(req.Id);
+            var ticket = _ticketRepository.FindById(id);
 
             if (ticket == null)
             {

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BugTracker.contracts;
+﻿using BugTracker.contracts;
 using BugTracker.contracts.requests.ticket;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.ticket;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BugTracker.Controllers
 {
@@ -31,9 +27,9 @@ namespace BugTracker.Controllers
 
         [HttpGet]
         [Route(ApiRoutes.Tickets.GetById)]
-        public IActionResult GetById(FindByIdRequest req)
+        public IActionResult GetById(Guid id)
         {
-            var res = _ticketService.GetById(req);
+            var res = _ticketService.GetById(id);
             if (!res.Success)
             {
                 BadRequest(res);
@@ -41,7 +37,7 @@ namespace BugTracker.Controllers
             return Ok(res);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route(ApiRoutes.Tickets.Create)]
         public IActionResult Create(CreateTicketRequest req)
         {
