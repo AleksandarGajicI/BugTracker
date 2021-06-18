@@ -64,5 +64,19 @@ namespace BugTracker.contracts
             public const string Create = Base + "/tickets";
 
         }
+
+        public static class TicketHistories
+        {
+            public const string GetByTicketId = Base + "/ticketHistories/{id}";
+
+        }
+
+        public static class Comments
+        {
+            public const string GetAllForTicket = Base + "/comments/{id}";
+            public const string Delete = Base + "/comments/{id}";
+            public const string Create = Base + "/comments";
+
+        }
     }
 }

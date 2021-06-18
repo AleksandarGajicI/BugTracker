@@ -1,8 +1,10 @@
 ﻿using BugTracker.infrastructure.unitOfWork;
+using BugTracker.repositories.comment;
 using BugTracker.repositories.project;
 using BugTracker.repositories.projectUserRequests;
 using BugTracker.repositories.role;
 using BugTracker.repositories.ticket;
+using BugTracker.repositories.ticketHistory;
 using BugTracker.repositories.ticketStatus;
 using BugTracker.repositories.user;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,8 @@ namespace BugTracker.helpers.dependencyInjection
             services.AddScoped<IProjectUserReqRepository, ProjectUserReqRepository>();
             services.AddScoped<ITicketStatusRepository, TicketStatusRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
         }
     }
 }

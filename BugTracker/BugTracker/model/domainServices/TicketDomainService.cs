@@ -12,9 +12,10 @@ namespace BugTracker.model.domainServices
         public ICollection<TicketHistory> GetHistoriesFor(Ticket ticket, 
                                                             User user,
                                                             string title, 
-                                                            string description, 
+                                                            string description,
                                                             DateTime deadline,
-                                                            TicketType type)
+                                                            TicketType type,
+                                                            TicketStatus status)
         {
             var histories = new List<TicketHistory>();
 
@@ -55,6 +56,15 @@ namespace BugTracker.model.domainServices
                                              type.ToString(),
                                              ticket => ticket.Type));
             }
+
+            if (!ticket.Status.Id.Equals(status.Id)) {
+                histories.Add(MakeHistoryFor(ticket,
+                                             user.UserName,
+                                             ticket.Status.Status,
+                                             status.Status,
+                                             ticket => ticket.Type));
+            }
+
 
             return histories;
         }

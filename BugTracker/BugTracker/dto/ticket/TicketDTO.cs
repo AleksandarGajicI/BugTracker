@@ -15,9 +15,9 @@ namespace BugTracker.dto.ticket
         public DateTime Deadline { get; set; }
         public string Description { get; set; }
         public string Type { get; set; }
-        public string Status { get; set; }
+        public TicketStatusDTO Status { get; set; }
 
-        public string Reporter { get; set; }
+        public UserAbbreviatedDTO Reporter { get; set; }
 
         public ICollection<Comment> RecentComments { get; set; }
         public ICollection<string> AssignedUsers { get; set; }

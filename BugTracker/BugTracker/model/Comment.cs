@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BugTracker.infrastructure.domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BugTracker.model
 {
-    public class Comment
+    public class Comment : EntityBase
     {
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
@@ -16,5 +17,28 @@ namespace BugTracker.model
 
         public Guid TicketId { get; set; }
         public Ticket Ticket { get; set; }
+
+        public override string ToString()
+        {
+            return $"Commenter: ${Commenter}, message: ${Message}, created at: ${Created}";
+        }
+
+        public override void Validate()
+        {
+            if (string.IsNullOrEmpty(Message)) 
+            {
+                AddBrokenRule(new BusinessRule("Message", "Message can't be null or empty field"));
+            }
+
+            if (Commenter is null) 
+            {
+                AddBrokenRule(new BusinessRule("Commenter", "Message must have an owner"));
+            }
+
+            if (Ticket is null)
+            {
+                AddBrokenRule(new BusinessRule("Ticket", "Message must have a ticket it is tied to"));
+            }
+        }
     }
 }

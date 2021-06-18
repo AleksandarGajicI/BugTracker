@@ -3,7 +3,6 @@ using BugTracker.contracts.requests.ticket;
 using BugTracker.dto.ticket;
 using BugTracker.helpers;
 using BugTracker.helpers.ticket;
-using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
@@ -11,6 +10,7 @@ using BugTracker.model.domainServices;
 using BugTracker.repositories.project;
 using BugTracker.repositories.projectUserRequests;
 using BugTracker.repositories.ticket;
+using BugTracker.repositories.ticketHistory;
 using BugTracker.repositories.ticketStatus;
 using BugTracker.repositories.user;
 using System;
@@ -30,6 +30,7 @@ namespace BugTracker.services.ticket
         private readonly ITicketStatusRepository _ticketStatusRepository;
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly ITicketHistoryRepository _ticketHistoryRepository;
         private readonly TicketDomainService _ticketDomainService = new TicketDomainService();
 
         public TicketService(ITicketRepository ticketRepository,
@@ -38,6 +39,7 @@ namespace BugTracker.services.ticket
                                 IProjectUserReqRepository projectUserReqRepository,
                                 ITicketStatusRepository ticketStatusRepository,
                                 IUnitOfWork uow,
+                                ITicketHistoryRepository ticketHistoryRepository,
                                 IMapper mapper)
         {
             _ticketRepository = ticketRepository;
@@ -46,6 +48,7 @@ namespace BugTracker.services.ticket
             _projectUserReqRepository = projectUserReqRepository;
             _ticketStatusRepository = ticketStatusRepository;
             _uow = uow;
+            _ticketHistoryRepository = ticketHistoryRepository;
             _mapper = mapper;
         }
 
@@ -61,7 +64,7 @@ namespace BugTracker.services.ticket
             var tickets = _ticketRepository.FindAll();
 
             res.Success = true;
-            res.FoundEntitiesDTO = 
+            res.FoundEntitiesDTO =
                 _mapper.Map<ICollection<Ticket>, ICollection<TicketAbbreviatedDTO>>(tickets.ToList());
             return res;
         }
@@ -119,8 +122,8 @@ namespace BugTracker.services.ticket
                     res.ReturnErrorResponseWith("Specified ticket status doesn't exist");
             }
 
-            var ticketType = req.TicketType == null ? 
-                            TicketType.UNDEFINED : 
+            var ticketType = req.TicketType == null ?
+                            TicketType.UNDEFINED :
                             req.TicketType.ConvertToTicketType();
 
             var ticket = _mapper.Map<CreateTicketRequest, Ticket>(req);
@@ -176,7 +179,7 @@ namespace BugTracker.services.ticket
             }
             catch (Exception ex)
             {
-                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message); 
+                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.IdDeleted = ticket.Id;
@@ -206,13 +209,34 @@ namespace BugTracker.services.ticket
                             res.ReturnErrorResponseWith("User not found");
             }
 
+            var project = _projectRepository.FindById(req.ProjectId);
+
+            if (project == null)
+            {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWith("Project not found");
+            }
+
+            if (!ticket.Project.Id.Equals(project.Id)) {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWith("Can't change project for the ticket");
+            }
+
+            var status = _ticketStatusRepository.FindById(req.StatusId);
+
+            if (status == null) {
+                return (UpdateResponse<TicketDTO>)
+                            res.ReturnErrorResponseWith("Status not found");
+            }
+
             var histories = _ticketDomainService
                                 .GetHistoriesFor(ticket,
                                                  user,
                                                  req.Title,
                                                  req.Description,
                                                  req.Deadline,
-                                                 type);
+                                                 type,
+                                                 status);
 
 
             if (type != TicketType.UNDEFINED)
@@ -224,6 +248,7 @@ namespace BugTracker.services.ticket
             ticket.Title = req.Title;
             ticket.Description = req.Description;
             ticket.Deadline = req.Deadline;
+            ticket.Status = status;
 
             ticket.Validate();
 
@@ -235,9 +260,9 @@ namespace BugTracker.services.ticket
 
             ticket.Updated = DateTime.Now;
 
-            foreach(var history in histories) 
-            { 
-                //TODO save all history
+            foreach (var history in histories)
+            {
+                _ticketHistoryRepository.Save(history);
             }
 
             _ticketRepository.Save(ticket);
