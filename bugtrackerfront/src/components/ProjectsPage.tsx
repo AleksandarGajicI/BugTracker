@@ -37,7 +37,10 @@ function ProjectsPage() {
                   style={{margin: "2em"}}
                   onClick={() => projectFormToggle.toggle() }
                 >
-                  MAKE NEW PROJECT
+                  {projectFormToggle.isOpen === false
+                  ? "MAKE NEW PROJECT"
+                  : "CANCEL"
+                  }
                 </Button>
               </Grid>
               <Grid

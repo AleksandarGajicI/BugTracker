@@ -12,6 +12,7 @@ import ProjectPage from './components/ProjectPage';
 import InviteUserPage from './components/InviteUserPage';
 import TicketsPage from './components/TicketsPage';
 import TicketPage from './components/TicketPage';
+import EditTicketPage from './components/EditTicketPage';
 
 
 
@@ -32,7 +33,8 @@ function App() {
       <Route exact path="/users" component={UsersPage}/>
       <Route path="/users/invite/:id" component={InviteUserPage}/>
       <Route exact path="/tickets" component={TicketsPage}/>
-      <Route path="/tickets/:id" component={TicketPage}/>
+      <Route exact path="/tickets/:id" component={TicketPage}/>
+      <Route path="/tickets/edit/:id" component={EditTicketPage}/>
     </div>
   );
 }

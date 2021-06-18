@@ -91,6 +91,7 @@ function EditProjectPage() {
              xs={12}
              container
              justify="center"
+             style={{margin: "20px"}}
             >
                 <Typography variant="h5">Edit Project</Typography>
             </Grid>

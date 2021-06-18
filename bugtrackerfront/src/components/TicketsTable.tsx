@@ -52,7 +52,7 @@ function TicketsTable(props: Props) {
                     <TableHead>
                         <TableRow>
                             <TableCell>Title:</TableCell>
-                            <TableCell align="center">Status:</TableCell>
+                            <TableCell align="left">Status:</TableCell>
                             <TableCell align="center">Deadline:</TableCell>
                         </TableRow>
                     </TableHead>
@@ -67,7 +67,7 @@ function TicketsTable(props: Props) {
                                     <TableCell component="th" scope="row">
                                     {ticket.title}
                                     </TableCell>
-                                    <TableCell align="center">{ticket.status}</TableCell>
+                                    <TableCell align="left">{ticket.status}</TableCell>
                                     <TableCell align="center">{ticket.deadline.toString().split("T")[0]}</TableCell>
                                 </TableRow>
                             )
