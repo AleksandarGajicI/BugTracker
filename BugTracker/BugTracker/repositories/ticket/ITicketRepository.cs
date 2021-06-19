@@ -9,5 +9,6 @@ namespace BugTracker.repositories.ticket
 {
     public interface ITicketRepository : IReadOnlyRepository<Ticket>, IPersistanceRepository<Ticket>
     {
+        public ICollection<Ticket> FindForProject(Guid projectId);
     }
 }

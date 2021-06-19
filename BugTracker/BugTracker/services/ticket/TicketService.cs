@@ -282,5 +282,16 @@ namespace BugTracker.services.ticket
 
             return res;
         }
+
+        public FindAllResponse<TicketForProjectDTO> GetAllForProject(Guid projectId)
+        {
+            var res = new FindAllResponse<TicketForProjectDTO>();
+
+            res.FoundEntitiesDTO =
+                _mapper.Map<ICollection<Ticket>, ICollection<TicketForProjectDTO>>(_ticketRepository.FindForProject(projectId));
+
+            res.Success = true;
+            return res;
+        }
     }
 }

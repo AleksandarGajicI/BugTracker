@@ -41,12 +41,12 @@ namespace BugTracker.contracts
 
         public static class ProjectUserReq
         {
-            public const string GetAll = Base + "/projectUserReq";
-            public const string GetById = Base + "/projectUserReq/id";
-            public const string Update = Base + "/projectUserReq";
-            public const string Delete = Base + "/projectUserReq";
-            public const string Create = Base + "/projectUserReq";
-            public const string Reply = Base + "/projectUserReq/Reply";
+            public const string GetAll = Base + "/requests";
+            public const string GetById = Base + "/requests/id";
+            public const string Update = Base + "/requests";
+            public const string Delete = Base + "/requests";
+            public const string Create = Base + "/requests";
+            public const string Reply = Base + "/requests/Reply";
 
         }
 
@@ -58,6 +58,7 @@ namespace BugTracker.contracts
         public static class Tickets
         {
             public const string GetAll = Base + "/tickets";
+            public const string GetAllForProject = Base + "/tickets/projects/{id}";
             public const string GetById = Base + "/tickets/{id}";
             public const string Update = Base + "/tickets/{id}";
             public const string Delete = Base + "/tickets/{id}";

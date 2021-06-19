@@ -29,5 +29,12 @@ namespace BugTracker.repositories.ticket
                     .ThenInclude(pur => pur.UserAssigned)
                 .Where(t => t.Id == id).FirstOrDefault();
         }
+
+        public ICollection<Ticket> FindForProject(Guid projectId)
+        {
+            return _table
+                .Include(t => t.Status)
+                .Where(t => t.Project.Id.Equals(projectId)).ToList();
+        }
     }
 }

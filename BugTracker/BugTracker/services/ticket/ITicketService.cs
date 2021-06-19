@@ -9,6 +9,7 @@ namespace BugTracker.services.ticket
     public interface ITicketService
     {
         public FindAllResponse<TicketAbbreviatedDTO> GetAll();
+        public FindAllResponse<TicketForProjectDTO> GetAllForProject(Guid projectId);
         public FindByIdResponse<TicketDTO> GetById(Guid id);
 
         public PagedResponse<TicketAbbreviatedDTO> FindPage();

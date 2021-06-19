@@ -22,6 +22,7 @@ namespace BugTracker.repositories.projectUserRequests
                 .Include(pur => pur.Sender)
                 .Include(pur => pur.Role)
                 .Include(pur => pur.UserAssigned)
+                .Include(pur => pur.Project)
                 .ToList();
         }
 

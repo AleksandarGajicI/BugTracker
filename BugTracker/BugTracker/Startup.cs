@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using BugTracker.auth;
 using System.Text;
 using BugTracker.helpers.dependencyInjection;
-
 namespace BugTracker
 {
     public class Startup

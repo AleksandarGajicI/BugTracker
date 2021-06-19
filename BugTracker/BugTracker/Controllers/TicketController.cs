@@ -49,5 +49,12 @@ namespace BugTracker.Controllers
             }
             return Ok(res);
         }
+
+        [HttpGet]
+        [Route(ApiRoutes.Tickets.GetAllForProject)]
+        public IActionResult GetForProject(Guid id) 
+        {
+            return Ok(_ticketService.GetAllForProject(id));
+        }
     }
 }

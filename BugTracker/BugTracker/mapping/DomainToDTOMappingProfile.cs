@@ -42,6 +42,9 @@ namespace BugTracker.mapping
                 .ForMember(dest => dest.Reporter, opt => opt.MapFrom(src => src.Reporter.UserAssigned))
                 .ForMember(dest => dest.RecentComments, opt => opt.MapFrom(src => src.Comments))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
+            CreateMap<Ticket, TicketForProjectDTO>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type.ToString()));
 
             //CreateMap<Ticket, TicketDTO>()
             //    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Status))
@@ -55,6 +58,7 @@ namespace BugTracker.mapping
         private void IncludeProjectMapping()
         {
             CreateMap<Project, ProjectDTO>()
+                .ForMember(dest => dest.RecentTickets, opt => opt.MapFrom(src => src.Tickets))
                 .ForMember(dest => dest.UsersOnProject,
                             opt => opt.MapFrom(src => src.ProjectUsersReq.Where(x => x.Accepted == true)))
                 .ForMember(dest => dest.PendingRequests,
@@ -71,11 +75,8 @@ namespace BugTracker.mapping
                 .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
 
             CreateMap<ProjectUserReq, ProjectUserRequestDTO>()
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.RoleName))
-                .ForMember(dest => dest.InvitedBy, opt => opt.MapFrom(src => src.Sender.UserName))
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserAssigned.UserName))
-                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Accepted));
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.Sender))
+                .ForMember(dest => dest.InvitedAt, opt => opt.MapFrom(src => src.RequestSent));
 
         }
     }
