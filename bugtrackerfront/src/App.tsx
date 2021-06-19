@@ -13,6 +13,7 @@ import InviteUserPage from './components/InviteUserPage';
 import TicketsPage from './components/TicketsPage';
 import TicketPage from './components/TicketPage';
 import EditTicketPage from './components/EditTicketPage';
+import {AuthProvider} from './contexts/AuthContext';
 
 
 
@@ -23,18 +24,20 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <Route exact path="/" component={HomePage}/>
-      <Route path="/login" component={LoginPage}/>
-      <Route path="/signup" component={SignupPage}/>
-      <Route exact path="/projects" component={ProjectsPage}/>
-      <Route exact path="/projects/:id" component={ProjectPage}/>
-      <Route path="/projects/edit/:id" component={EditProjectPage}/>
-      <Route path="/requests" component={RequestsPage}/>
-      <Route exact path="/users" component={UsersPage}/>
-      <Route path="/users/invite/:id" component={InviteUserPage}/>
-      <Route exact path="/tickets" component={TicketsPage}/>
-      <Route exact path="/tickets/:id" component={TicketPage}/>
-      <Route path="/tickets/edit/:id" component={EditTicketPage}/>
+      <AuthProvider>
+        <Route exact path="/" component={HomePage}/>
+        <Route path="/login" component={LoginPage}/>
+        <Route path="/signup" component={SignupPage}/>
+        <Route exact path="/projects" component={ProjectsPage}/>
+        <Route exact path="/projects/:id" component={ProjectPage}/>
+        <Route path="/projects/edit/:id" component={EditProjectPage}/>
+        <Route path="/requests" component={RequestsPage}/>
+        <Route exact path="/users" component={UsersPage}/>
+        <Route path="/users/invite/:id" component={InviteUserPage}/>
+        <Route exact path="/tickets" component={TicketsPage}/>
+        <Route exact path="/tickets/:id" component={TicketPage}/>
+        <Route path="/tickets/edit/:id" component={EditTicketPage}/>
+      </AuthProvider>
     </div>
   );
 }

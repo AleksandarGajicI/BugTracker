@@ -1,5 +1,6 @@
 import { AppBar, Button, Grid, IconButton, Toolbar, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import { useHistory } from 'react-router-dom';
 import useStyles from './style/MainStyle';
 
 
@@ -8,8 +9,14 @@ interface Props {
 }
 
 function AppToolbar(props: Props) {
+    const history = useHistory()
 
     const classes = useStyles()
+
+    function onLogout() {
+        localStorage.removeItem("token")
+        history.push("/")
+    }
 
     return (
         
@@ -55,7 +62,10 @@ function AppToolbar(props: Props) {
                  container
                  justify="flex-end"
                 >
-                    <Button color="inherit" >Login</Button>
+                    <Button 
+                    color="inherit" 
+                    onClick={() => {onLogout()}}
+                    >Logout</Button>
                 </Grid>
                 </Grid>
                 </Toolbar>

@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import DeleteResponse from "../models/contracts/DeleteReponse";
 import MultipleEntityReponse from "../models/contracts/MultipleEntityReponse";
 import SingleEntityResponse from "../models/contracts/SingleEntityResponse";
+import { LoginResponse } from "../models/dtos/LoginResponse";
 
 axios.defaults.baseURL = "http://localhost:5000/api/v1";
 
@@ -37,6 +38,11 @@ const Requests = {
       .get<PagedResponse<T>>(url, { params })
       .then(responseBody)
       .then((data) => data.entitiesDTO),
+  login: <T>(url: string, body: any) =>
+    axios
+      .post<LoginResponse>(url, body)
+      .then(responseBody)
+      .then((data) => data),
 };
 
 export default Requests;
