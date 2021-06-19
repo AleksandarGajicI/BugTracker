@@ -1,4 +1,4 @@
-import { Button, Grid } from "@material-ui/core"
+import { Button, Grid, Typography } from "@material-ui/core"
 import { useState } from "react"
 import TicketForm from "./forms/TicketForm"
 import Layout from "./Layout"
@@ -15,8 +15,18 @@ function TicketsPage() {
                 <Grid
                 item
                 container
+                direction="column"
+                justify="flex-start"
+                style={{padding: "2em", backgroundColor: "#CCCCCD"}}
+                >
+                    <Typography variant="h5">Welcome to the tickets page!</Typography> 
+                    <Typography style={{fontSize: "15px"}}>Here you can easilly manage your tickets</Typography> 
+                </Grid>
+                <Grid
+                item
+                container
                 justify="flex-end"
-                style={{marginBottom: "1em"}}
+                style={{marginTop: "1em"}}
                 >
                     <Button
                     size="large"

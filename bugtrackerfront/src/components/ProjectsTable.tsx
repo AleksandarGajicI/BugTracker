@@ -5,6 +5,7 @@ import {useEffect, useState} from 'react';
 import Actions from "./actions/Actions";
 import { useHistory } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
+import { ParamsBuilder } from "./actions/ParamsBuilder";
 
 
 function ProjectTable() {
@@ -12,22 +13,42 @@ function ProjectTable() {
     const [projects, setProjects] = useState<Project[]>([]);
     const history = useHistory()
     const [loading, setLoading] = useState(false)
+    const paramsBuilder = new ParamsBuilder()
+    const [pageNum, setPageNum] = useState<number>(1)
 
     useEffect(() => {
-
         setLoading(true)
-        Actions.ProjectActions.all().then(response => {
-            setProjects(response)
-            setLoading(false)
-        })
+        fetchPage(1)
     }, [])
 
-    function onNext(nextPage: number) {
-        alert(nextPage)
+    function fetchPage(pageNum: number) {
+
+        setLoading(true)
+        setPageNum(pageNum)
+        paramsBuilder
+        .addParameter("PageSize", 3)
+        .addParameter("PageNum", pageNum)
+        Actions.ProjectActions.page(paramsBuilder.makeUrlSearchParams())
+        .then(projects => {
+            console.log(projects)
+            setProjects(projects)
+            setLoading(false)
+        })
+
     }
 
-    function onPrev(prevPage: number) {
-        alert(prevPage)
+    function onPrev(pageNum: number) {
+        console.log("from prev")
+        if(pageNum > 0) {
+            console.log("pageNum", pageNum)
+            fetchPage(pageNum)
+        }
+    }
+
+    function onNext(pageNum: number) {
+        if(projects.length > 0) {
+            fetchPage(pageNum)
+        }
     }
 
     function deleteProject(id: string, e: any) {
@@ -113,7 +134,7 @@ function ProjectTable() {
                 <TableFooter>
                     <TableRow>
                         <TableCell colSpan={6}>
-                            <Pagination pageNum={1} onPrevClick={onPrev} onNextClick={onNext}/>
+                            <Pagination pageNum={pageNum} onPrevClick={onPrev} onNextClick={onNext}/>
                         </TableCell>
                     </TableRow>   
                 </TableFooter>

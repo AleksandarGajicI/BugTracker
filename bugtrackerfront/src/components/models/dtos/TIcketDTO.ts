@@ -6,7 +6,13 @@ export interface TicketDTO {
   deadline: string;
   description: string;
   type: string;
-  status: string;
-  reporter: string;
+  status: {
+    id: string;
+    status: string;
+  };
+  reporter: {
+    id: string;
+    userName: string;
+  };
   assignedUsers: string[];
 }

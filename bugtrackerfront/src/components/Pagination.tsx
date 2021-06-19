@@ -34,7 +34,7 @@ function Pagination(props: Prop) {
                     <IconButton size="small" onClick={() => onPrevClick(pageNum - 1)}>
                         <ArrowBackIosIcon color="primary" fontSize="small"/>
                     </IconButton>
-                    <Typography variant="subtitle2">1</Typography>
+                    <Typography variant="subtitle2">{pageNum}</Typography>
                     <IconButton size="small" onClick={() => onNextClick(pageNum + 1)}>
                         <ArrowForwardIosIcon color="primary" fontSize="small"/>
                     </IconButton>

@@ -1,52 +1,56 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+import { useEffect } from "react";
+import { useState } from "react";
+import Actions from "./actions/Actions";
+import Loading from "./Loading";
+import { UserDTO } from "./models/dtos/UserDTO";
 import Pagination from "./Pagination";
 
-interface UserDTO {
-    id: string,
-    name: string,
-    email: string,
-    joined: string,
-    userName: string
+
+
+interface Props {
+    onClick: (user: UserDTO) => void
 }
 
-const users: UserDTO[] = [
-    {
-        id: "1",
-        name: "Name 1",
-        email: "Email 1",
-        joined: "10.10.2020",
-        userName: "username1"
-    },
-    {
-        id: "2",
-        name: "Name 2",
-        email: "Email 2",
-        joined: "20.20.1010",
-        userName: "username2"
+function UsersTable(props: Props) {
+
+    const [users, setUsers] = useState<UserDTO[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
+
+    useEffect(() => {
+        setLoading(true)
+        Actions.UserActions.all()
+        .then(data => {
+            console.log(data)
+            setUsers(data)
+            setLoading(false)
+        })
+        .catch(e => {
+            console.log(e)
+            setLoading(false)
+        })
+    }, [])
+
+
+    if(loading) {
+        return (
+            <Loading/>
+        )
     }
-]
-
-function UsersTable() {
-
-    const history = useHistory()
-
-    function redirect(id: string) {
-        history.push("/users/invite/" + id)
-    }
-
     return (
         <TableContainer 
          component={Paper}
         >
             <Table>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>UserName:</TableCell>
-                        <TableCell align="center">Name:</TableCell>
-                        <TableCell align="right">Email:</TableCell>
-                        <TableCell align="right">Joined:</TableCell>
-                        <TableCell align="right"></TableCell>
+                    <TableRow
+                    style={{backgroundColor: "#3f51b5",}}
+                    >
+                        <TableCell style={{color: "#fff"}}>UserName:</TableCell>
+                        <TableCell style={{color: "#fff"}} align="center">Name:</TableCell>
+                        <TableCell style={{color: "#fff"}} align="center">Email:</TableCell>
+                        <TableCell style={{color: "#fff"}} align="center">Joined:</TableCell>
+                        <TableCell align="center"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -61,11 +65,11 @@ function UsersTable() {
                                 </TableCell>
                                 <TableCell align="center">{user.name}</TableCell>
                                 <TableCell align="center">{user.email}</TableCell>
-                                <TableCell align="right">{user.joined.toString().split("T")[0]}</TableCell>
+                                <TableCell align="center">{user.joined.toString().split("T")[0]}</TableCell>
                                 <TableCell align="right">
                                     <Button 
                                     color="primary"
-                                    onClick={() => redirect(user.id)}
+                                    onClick={() => props.onClick(user)}
                                     >
                                         INVITE USER
                                     </Button>

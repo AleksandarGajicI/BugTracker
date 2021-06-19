@@ -1,5 +1,6 @@
 import { 
     Button, 
+    Grid, 
     Paper, 
     Table, 
     TableBody, 
@@ -9,6 +10,7 @@ import {
     TableHead, 
     TableRow 
 } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import { TicketForProjectDTO } from "./models/dtos/TicketForProjectDTO";
 
 
@@ -36,6 +38,7 @@ interface Props {
 }
 
 function TicketForProjectTable(props: Props) {
+    const history = useHistory()
     return (
         <TableContainer 
          component={Paper}
@@ -47,7 +50,6 @@ function TicketForProjectTable(props: Props) {
                         <TableCell align="center">Type</TableCell>
                         <TableCell align="right">Status</TableCell>
                         <TableCell align="right">Deadline</TableCell>
-                        <TableCell align="right"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -82,9 +84,6 @@ function TicketForProjectTable(props: Props) {
                                 >
                                     {ticket.deadline.toString().split("T")[0]}
                                 </TableCell>
-                                <TableCell align="right">
-                                    <Button color="secondary">CLOSE</Button>
-                                </TableCell>
                             </TableRow>
                         )
                     })
@@ -92,8 +91,18 @@ function TicketForProjectTable(props: Props) {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={6}>
-                            TODO: Botton to add user to project
+                        <TableCell colSpan={12}>
+                            <Grid
+                            container
+                            justify="center">
+                                <Button 
+                                color="primary" 
+                                variant="contained"
+                                onClick={() => {history.push("/tickets")}}
+                                >
+                                    ADD TICKET TO PROJECT
+                                </Button>
+                            </Grid>
                         </TableCell>
                     </TableRow>   
                 </TableFooter>

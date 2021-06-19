@@ -14,6 +14,8 @@ const ProjectActions = {
   getById: (id: string) => Requests.getById<ProjectDTO>(`${route}/${id}`),
   update: (id: string, project: ProjectUpdateDTO) =>
     Requests.put<Project>(`${route}/${id}`, project),
+  page: (params: URLSearchParams) =>
+    Requests.getPage<Project[]>(`${route}/page`, params),
 };
 
 export default ProjectActions;

@@ -1,4 +1,4 @@
-import {Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from "@material-ui/core";
+import {Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, TextField } from "@material-ui/core";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -50,6 +50,21 @@ function TicketsTable(props: Props) {
             >
                 <Table>
                     <TableHead>
+                        <TableRow>
+                            <TableCell colSpan={2}/>
+                            <TableCell colSpan={1} align="right">
+                                
+                                <TextField
+                                id="filled-full-width"
+                                label="Search for ticket by title"
+                                style={{ margin: 8 }}
+                                placeholder="Enter title"
+                                fullWidth
+                                margin="normal"
+                                variant="outlined"
+                                />
+                            </TableCell>
+                        </TableRow>
                         <TableRow>
                             <TableCell>Title:</TableCell>
                             <TableCell align="left">Status:</TableCell>

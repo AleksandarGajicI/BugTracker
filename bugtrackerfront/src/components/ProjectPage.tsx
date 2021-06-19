@@ -3,7 +3,9 @@ import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router"
 import Actions from "./actions/Actions"
 import Layout from "./Layout"
+import Loading from "./Loading"
 import { ProjectDTO } from "./models/dtos/ProjectDTO"
+import { TicketAbbrevDTO } from "./models/dtos/TicketAbbrevDTO"
 import Project from "./models/Project"
 import TicketForProjectTable from "./TicketForProjectTable"
 import UsersOnProjectTable from "./UsersOnProjectTable"
@@ -21,21 +23,36 @@ const initial: ProjectDTO = {
 
 function ProjectPage() {
     const {id} = useParams<{id: string}>()
+    const [loading, setLoading] = useState<boolean>(false)
     const [project, setProject] = useState<ProjectDTO>(initial)
+    const [tickets, setTickets] = useState<TicketAbbrevDTO[]>([])
     const history = useHistory()
 
     useEffect(() => {
-        console.log(id)
+        setLoading(true)
 
         Actions.ProjectActions.getById(id)
         .then(data => {
             setProject(data)
-            console.log(project)
+            console.log(data)
+            Actions.TicketActions.getForProject(data.id)
+            .then(data => {
+                console.log(data)
+                setTickets(data)
+                setLoading(false)
+
+            })
         })
     }, [])
 
     function redirectToEdit() {
         history.push("/projects/edit/" + id)
+    }
+
+    if(loading) {
+        return (
+            <Loading />
+        )
     }
 
     return (
@@ -57,7 +74,7 @@ function ProjectPage() {
                         <Typography 
                         variant="h5"
                         >
-                            Welcome to Project page!
+                            {`Viewing: ${project.name} project`}
                         </Typography>
                         <Button
                         color="secondary"
@@ -143,7 +160,7 @@ function ProjectPage() {
                      md={6}
                      style={{backgroundColor: "#456999", padding: "1em"}}
                     >
-                        <TicketForProjectTable tickets={project.recentTickets}/>
+                        <TicketForProjectTable tickets={tickets}/>
                     </Grid>
                 </Grid>
             </Grid>

@@ -94,6 +94,9 @@ const useStyles = makeStyles((theme: Theme) =>
       height: "100vh",
       width: "100%",
     },
+    input: {
+      color: "white",
+    },
   })
 );
 

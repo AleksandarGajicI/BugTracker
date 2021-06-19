@@ -1,3 +1,4 @@
+import { PagedResponse } from "./../models/contracts/PagedResponse";
 import axios, { AxiosResponse } from "axios";
 import DeleteResponse from "../models/contracts/DeleteReponse";
 import MultipleEntityReponse from "../models/contracts/MultipleEntityReponse";
@@ -31,6 +32,11 @@ const Requests = {
       .get<SingleEntityResponse<T>>(url)
       .then(responseBody)
       .then((data) => data.entityDTO),
+  getPage: <T>(url: string, params: URLSearchParams) =>
+    axios
+      .get<PagedResponse<T>>(url, { params })
+      .then(responseBody)
+      .then((data) => data.entitiesDTO),
 };
 
 export default Requests;

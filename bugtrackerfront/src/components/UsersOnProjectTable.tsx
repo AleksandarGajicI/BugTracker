@@ -1,4 +1,5 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from "@material-ui/core";
+import { Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import { UserOnProjectDTO } from "./models/dtos/UserOnProjectDTO";
 
 
@@ -24,6 +25,8 @@ interface Props {
 }
 
 function UsersOnProjectTable(props: Props) {
+    const history = useHistory()
+
     return (
         <TableContainer 
          component={Paper}
@@ -80,8 +83,16 @@ function UsersOnProjectTable(props: Props) {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={6}>
-                            TODO: Botton to add user to project
+                        <TableCell colSpan={12}>
+                            <Grid
+                            container
+                            justify="center">
+                                <Button 
+                                color="primary" 
+                                variant="contained"
+                                onClick={() => {history.push("/users")}}
+                                >ADD USER TO PROJECT</Button>
+                            </Grid>
                         </TableCell>
                     </TableRow>   
                 </TableFooter>

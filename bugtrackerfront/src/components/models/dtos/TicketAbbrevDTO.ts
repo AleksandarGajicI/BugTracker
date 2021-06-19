@@ -3,4 +3,5 @@ export interface TicketAbbrevDTO {
   title: string;
   deadline: string;
   status: string;
+  type: string;
 }

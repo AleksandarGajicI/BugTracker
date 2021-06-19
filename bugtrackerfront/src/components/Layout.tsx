@@ -14,12 +14,11 @@ interface Props {
 function Layout(props: Props) {
     const classes = useStyles();
     const [isOpen, setOpen] = useState(false);
-    const projectFormToggle = useToggle(false);
 
     return (
       <Grid
        container
-       style={{backgroundColor: "#657567"}}
+       style={{backgroundColor: "#eeeeee"}}
       >
         <Grid
          item

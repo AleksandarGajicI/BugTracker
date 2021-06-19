@@ -6,12 +6,16 @@ import CommentsTable from "./CommentsTable"
 import Layout from "./Layout"
 import Loading from "./Loading"
 import { TicketDTO } from "./models/dtos/TIcketDTO"
+import useStyles from "./style/MainStyle"
+
+const ticket = ""
 
 function TicketPage() {
     const {id} = useParams<{id: string}>()
     const [loading, setLoading] = useState<boolean>(false)
     const [ticket, setTicket] = useState<TicketDTO>()
     const history = useHistory()
+    const classes = useStyles()
 
     useEffect(() => {
         setLoading(true)
@@ -42,15 +46,15 @@ function TicketPage() {
                 item
                 container
                 xs={12}
-                md={6}
-                style={{padding: "1em"}}>
+                md={5}
+                style={{padding: "20px"}}>
                     <Grid
                     container
                     >
                         <Grid
                         container
                         item
-                        style={{backgroundColor: "#3f51b5", padding: "1em"}}>
+                        style={{backgroundColor: "#3f51b5", padding: "20px"}}>
                             <Grid
                             item
                             container
@@ -58,7 +62,7 @@ function TicketPage() {
                             xs={12}
                             md={6}>
                                 <Typography 
-                                variant="h6"
+                                variant="h5"
                                 style={{color: "#fff"}}>
                                     {ticket?.title}
                                 </Typography>
@@ -86,7 +90,7 @@ function TicketPage() {
                         <Grid
                         container
                         item
-                        style={{backgroundColor: "#e0e0e0", padding: "1em"}}>
+                        style={{backgroundColor: "#e0e0e0", padding: "20px"}}>
                             <Grid
                             item
                             container
@@ -173,7 +177,7 @@ function TicketPage() {
                                 </Typography>
                                 <Typography
                                 style={{ fontSize: "1em"}}>
-                                    {ticket?.status}
+                                    {ticket?.status.status}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -221,7 +225,7 @@ function TicketPage() {
                                     Reporter
                                 </Typography><Typography
                                 style={{ fontSize: "1em"}}>
-                                    {ticket?.reporter}
+                                    {ticket?.reporter.userName}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -231,14 +235,21 @@ function TicketPage() {
                 item
                 container
                 xs={12}
-                md={6}
+                md={7}
                 style={{
-                    backgroundColor: "#489", 
+                    backgroundColor: "#fff", 
                     padding: "1em", 
-                    paddingTop: "2em"
+                    paddingTop: "2em",
+                    marginTop: "10em"
                 }}
                 direction="column">
-                    Add a comment?
+                    <Grid
+                    container
+                    item
+                    justify="center"
+                    >
+                        <Typography variant="h6">Add a comment?</Typography>
+                    </Grid>
                     <Grid
                     item
                     container
@@ -253,7 +264,7 @@ function TicketPage() {
                             <TextField
                             id="filled-full-width"
                             label="Enter a comment"
-                            style={{ margin: 8 }}
+                            style={{ margin: 8}}
                             placeholder="Comment body"
                             fullWidth
                             margin="normal"
@@ -284,32 +295,36 @@ function TicketPage() {
                         >
                             <Typography
                             style={{color: "#fff"}}>
-                                Comment for this ticket
+                                Comments for this ticket
                             </Typography>
-                        </Grid>
-                        <Grid
-                        container
-                        item
-                        style={{
-                            padding: "1em"
-                        }}
-                        justify="flex-end"
-                        >
                             <Grid
+                            container
                             item
-                            xs={6}
+                            style={{
+                                padding: "1em",
+                            }}
+                            justify="flex-end"
                             >
-                                <TextField
-                                label="Search by commenter"
-                                style={{ margin: 8 }}
-                                fullWidth
-                                margin="normal"
-                                variant="filled"
-                                />
-                            </Grid>
+                                <Grid
+                                item
+                                xs={6}
+                                >
+                                    <TextField
+                                    label="Search by commenter"
+                                    style={{ margin: 0 }}
+                                    fullWidth
+                                    margin="normal"
+                                    variant="filled"
+                                    color="secondary"
+                                    InputProps={{
+                                        className: classes.input
+                                    }}
+                                    />
+                                </Grid>
                             
+                            </Grid>
+                            <CommentsTable />
                         </Grid>
-                        <CommentsTable />
                     </Grid>
                 </Grid>
             </Grid>

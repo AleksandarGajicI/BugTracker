@@ -7,6 +7,8 @@ const route = "/tickets";
 const TicketActions = {
   all: () => Requests.get<TicketAbbrevDTO[]>(route),
   getById: (id: string) => Requests.getById<TicketDTO>(`${route}/${id}`),
+  getForProject: (projectId: string) =>
+    Requests.get<TicketAbbrevDTO[]>(`${route}/projects/${projectId}`),
   //   create: (project: CreateProjectRequest) =>
   //     Requests.post<Project>(route, project),
   //   delete: (id: string) => Requests.delete(`${route}/${id}`),
