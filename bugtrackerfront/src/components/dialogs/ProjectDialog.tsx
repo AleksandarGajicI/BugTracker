@@ -17,7 +17,7 @@ function ProjectDialog(props: Props) {
          open={props.open}
          onClose={props.toggle}
         >
-            <ProjectForm />
+            {/* <ProjectForm afterCreate={() => {console.log("toggle")}}/> */}
         </DialogBase>
     );
 }

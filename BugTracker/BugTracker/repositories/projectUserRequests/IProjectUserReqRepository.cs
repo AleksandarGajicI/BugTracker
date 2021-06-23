@@ -11,5 +11,7 @@ namespace BugTracker.repositories.projectUserRequests
                                                  IPersistanceRepository<ProjectUserReq>
     {
         public ProjectUserReq FindProjectUserFor(Guid userId, Guid projectId);
+        public ICollection<ProjectUserReq> FindReceivedReqFor(Guid userId);
+        public ICollection<ProjectUserReq> FindSentReqFor(Guid userId);
     }
 }

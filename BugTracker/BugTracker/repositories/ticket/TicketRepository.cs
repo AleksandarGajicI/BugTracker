@@ -25,8 +25,14 @@ namespace BugTracker.repositories.ticket
                 .Include(t => t.Project)
                 .Include(t => t.Comments)
                 .Include(t => t.Status)
-                .Include(t => t.Reporter)
-                    .ThenInclude(pur => pur.UserAssigned)
+                .Include(t => t.Project)
+                    .ThenInclude(p => p.ProjectUsersReq)
+                        .ThenInclude(pur => pur.UserAssigned)
+                .Include(t => t.Project)
+                    .ThenInclude(p => p.ProjectUsersReq)
+                        .ThenInclude(pur => pur.Sender)
+                //.Include(t => t.Reporter)
+                //    .ThenInclude(pur => pur.UserAssigned)
                 .Where(t => t.Id == id).FirstOrDefault();
         }
 

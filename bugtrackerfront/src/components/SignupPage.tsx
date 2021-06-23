@@ -4,11 +4,10 @@ import EmailIcon from '@material-ui/icons/Email';
 import LockIcon from '@material-ui/icons/Lock';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import {useForm} from "../components/useForm"
-import { Link } from "react-router-dom";    
-import React, {useState} from 'react'
+import { Link, useHistory } from "react-router-dom";    
+import {useState} from 'react'
 import Actions from "./actions/Actions"
 import { UserCreationDTO } from "./models/dtos/UserCreationDTO";
-import {useAuth} from '../contexts/AuthContext';
 
 
 const initial: UserCreationDTO = {
@@ -36,12 +35,12 @@ const useCustomStyles = makeStyles((theme) => ({
 }))
 
 function SignupPage() {
-    const {currentUser, setCurrentUser} = useAuth();
     const customClasses = useCustomStyles()
     const classes = useStyles()
     //const [user, setUser] = useState<UserCreationDTO>(initial)
     const [signUpError, setSignUpError] = useState("");
     const {values, handleInputChange, errors, setErrors} = useForm(initialFieldValues);
+    const history = useHistory()
 
     const validate = () => {
         setSignUpError('');
@@ -86,8 +85,8 @@ function SignupPage() {
             Actions.UserActions.create(user)
             .then(res => {
                 console.log(res);
-                setCurrentUser(res);
                 localStorage.setItem('token', res.bugTrackerToken);
+                history.push("/projects")
             })
             .catch(err => {
                 console.log(err);

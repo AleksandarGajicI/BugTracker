@@ -5,5 +5,6 @@ namespace BugTracker
     public class LoginResponse : ResponseBase
     {
         public string Token { get; set; }
+
     }
 }

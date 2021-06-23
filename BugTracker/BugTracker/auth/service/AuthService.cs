@@ -91,7 +91,7 @@ namespace BugTracker.auth.service
                 BugTrackerJWTConstants.Audience,
                 claims,
                 null,
-                DateTime.UtcNow.AddMinutes(5),
+                DateTime.UtcNow.AddDays(3),
                 credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);

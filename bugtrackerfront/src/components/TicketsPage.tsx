@@ -44,7 +44,7 @@ function TicketsPage() {
                 item
                 xs={12}
                 md={12}
-                style={{margin: "1em", backgroundColor: "#345355"}}
+                style={{margin: "1em"}}
                 >
                     {toggle && 
                         <TicketForm 

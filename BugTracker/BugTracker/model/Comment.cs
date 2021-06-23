@@ -1,9 +1,5 @@
 ﻿using BugTracker.infrastructure.domain;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BugTracker.model
 {
@@ -25,12 +21,12 @@ namespace BugTracker.model
 
         public override void Validate()
         {
-            if (string.IsNullOrEmpty(Message)) 
+            if (string.IsNullOrEmpty(Message))
             {
                 AddBrokenRule(new BusinessRule("Message", "Message can't be null or empty field"));
             }
 
-            if (Commenter is null) 
+            if (Commenter is null)
             {
                 AddBrokenRule(new BusinessRule("Commenter", "Message must have an owner"));
             }

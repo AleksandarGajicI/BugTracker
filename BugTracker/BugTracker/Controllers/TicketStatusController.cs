@@ -1,5 +1,6 @@
 ﻿using BugTracker.contracts;
 using BugTracker.services.ticketStatus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BugTracker.Controllers
@@ -15,6 +16,7 @@ namespace BugTracker.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymousAttribute]
         [Route(ApiRoutes.TicketStatus.GetAll)]
         public IActionResult GetAll()
         {

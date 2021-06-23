@@ -19,7 +19,7 @@ namespace BugTracker.dto.ticket
 
         public UserAbbreviatedDTO Reporter { get; set; }
 
-        public ICollection<Comment> RecentComments { get; set; }
+        public ICollection<CommentDTO> RecentComments { get; set; }
         public ICollection<string> AssignedUsers { get; set; }
     }
 }

@@ -13,15 +13,60 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { useState } from 'react';
 import { ProjectUserReqDTO } from './models/dtos/ProjectUserReqDTO';
-import { Button, Grid } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { useEffect } from 'react';
 import Actions from './actions/Actions';
+import { HeadersBuilder } from './actions/HeadersBuilder';
+import Loading from './Loading';
+import { useHistory } from 'react-router-dom';
 
 
-function Row(props: {request: ProjectUserReqDTO, isOwner: boolean}) {    
+function Row(props: {request: ProjectUserReqDTO, isOwner: boolean, headerBuilder: HeadersBuilder}) {    
     const [open, setOpen] = useState<boolean>(false)
+    const history = useHistory()
 
-    
+    function deleteRequest() {
+      const message = props.isOwner === true ? "delete" : "reject"
+      const confirmed = window.confirm(`Are you sure you want to ${message} this request?`)
+
+        if(confirmed) {
+          props.headerBuilder.resetHeaders()
+          .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+          if(props.isOwner) {
+            Actions.ProjectUserReqActions.delete(props.request.id, props.headerBuilder.getHeaders())
+            .then(() => {
+              //TODO reload requests 
+                history.push("/tickets")
+            })
+          } else {
+            //something else
+            Actions.ProjectUserReqActions.reply({
+              isAccepted: false,
+              requestId: props.request.id
+            }, props.headerBuilder.getHeaders())
+            .then(() => {
+                history.push("/tickets")
+            })
+          }
+
+          
+        }
+    }
+
+    function acceptRequest() {
+      props.headerBuilder.resetHeaders()
+      .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+      Actions.ProjectUserReqActions.reply({
+        isAccepted: true,
+        requestId: props.request.id
+      }, props.headerBuilder.getHeaders())
+      .then(() => {
+          history.push("/tickets")
+      })
+    }
+
     return (
         <>
         <TableRow>
@@ -72,6 +117,7 @@ function Row(props: {request: ProjectUserReqDTO, isOwner: boolean}) {
                             color="primary" 
                             size="small"
                             style={{margin: "0.5em"}}
+                            onClick={() => acceptRequest()}
                             >
                                 ACCEPT
                           </Button>}
@@ -80,6 +126,7 @@ function Row(props: {request: ProjectUserReqDTO, isOwner: boolean}) {
                             color="secondary" 
                             size="small"
                             style={{margin: "0.5em"}}
+                            onClick={() => deleteRequest()}
                             >
                                 {!props.isOwner
                                 ? "REJECT"
@@ -100,13 +147,34 @@ function Row(props: {request: ProjectUserReqDTO, isOwner: boolean}) {
 
 function RequestsTable(props: {isOwner: boolean}) {
     const [requests, setRequests] = useState<ProjectUserReqDTO[]>([])
+    const [loading, setLoading] = useState(true)
+    const headerBuilder = new HeadersBuilder()
 
     useEffect(() => {
-        Actions.ProjectUserReqActions.all()
+
+      headerBuilder.resetHeaders()
+      .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+      if(props.isOwner) {
+        Actions.ProjectUserReqActions.getSent(headerBuilder.getHeaders())
         .then(data => {
             setRequests(data)
+            setLoading(false)
         })
+      }
+      else {
+        
+        Actions.ProjectUserReqActions.all(headerBuilder.getHeaders())
+        .then(data => {
+            setRequests(data)
+            setLoading(false)
+        })
+      }
+        
     }, [])
+
+    if(loading) {
+      return <Loading/>
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -121,8 +189,17 @@ function RequestsTable(props: {isOwner: boolean}) {
         </TableHead>
         <TableBody>
           {requests.map((request) => (
-            <Row key={request.id} request={request} isOwner={props.isOwner}/>
+            <Row headerBuilder={headerBuilder} key={request.id} request={request} isOwner={props.isOwner}/>
           ))}
+          {requests.length <= 0 &&
+          <TableRow>
+            <TableCell colSpan={4}
+            align="center"
+            style={{color: "#E20B0B", fontSize: "1.2em"}}>
+              No Requests
+            </TableCell>
+          </TableRow>
+          }
         </TableBody>
       </Table>
     </TableContainer>

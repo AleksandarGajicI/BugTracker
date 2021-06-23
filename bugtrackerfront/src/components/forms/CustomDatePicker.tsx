@@ -39,7 +39,6 @@ function CustomDatePicker(props: Props) {
     }, [value])
 
     function handleOnChange(date: MaterialUiPickersDate) {
-        debugger;;
         onChange({target: {
             name: currentDate, 
             value: date,

@@ -2,6 +2,7 @@ import { Button, Grid, Typography } from "@material-ui/core";
 import { useEffect } from "react";
 import { useState } from "react";
 import Actions from "../actions/Actions";
+import { HeadersBuilder } from "../actions/HeadersBuilder";
 import { ProjectUserReqCreateDTO } from "../models/dtos/ProjectUserReqCreateDTO";
 import { useForm } from "../useForm";
 import CustomInput from "./CustomInput";
@@ -26,9 +27,12 @@ function ProjectUserReqForm(props: Props) {
     const [projectsSelect, setProjectsSelect] = useState<{id: string, name: string}[]>([])
     const [roleSelect, setRoleSelect] = useState<{id: string, name: string}[]>([])
     const {values, errors, setErrors, handleInputChange} = useForm(initialValues);
+    const headerBuilder = new HeadersBuilder()
 
     useEffect(() => {
-        Actions.ProjectActions.all()
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+        Actions.ProjectActions.all(headerBuilder.getHeaders())
         .then(projects => {
             setProjectsSelect(
                 projects.map(project => {

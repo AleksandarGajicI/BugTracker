@@ -3,7 +3,6 @@ import Layout from "./Layout";
 import RequestsTable from "./RequestsTable";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IconButton from '@material-ui/core/IconButton';
-import { ExpandMoreRounded } from "@material-ui/icons";
 
 
 function RequestsPage() {

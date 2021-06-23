@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using BugTracker.contracts.requests.filterAndOrdering;
 using BugTracker.contracts.requests.ticket;
 using BugTracker.dto.ticket;
 using BugTracker.helpers;
 using BugTracker.helpers.ticket;
+using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.infrastructure.unitOfWork;
 using BugTracker.model;
@@ -13,6 +15,7 @@ using BugTracker.repositories.ticket;
 using BugTracker.repositories.ticketHistory;
 using BugTracker.repositories.ticketStatus;
 using BugTracker.repositories.user;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,9 +55,41 @@ namespace BugTracker.services.ticket
             _mapper = mapper;
         }
 
-        public PagedResponse<TicketAbbreviatedDTO> FindPage()
+        public PagedResponse<TicketAbbreviatedDTO> FindPage(string userId, PagedQuery pageQuery, FilterAndOrderQuery filterAndOrderQuery)
         {
-            throw new NotImplementedException();
+            var res = new PagedResponse<TicketAbbreviatedDTO>();
+
+            var size = pageQuery.PageSize == null ? 3 : (int)pageQuery.PageSize;
+            var num = pageQuery.PageNum == null ? 3 : (int)pageQuery.PageNum;
+
+            var ticketQuery = _ticketRepository.GetBasicQuery();                                             
+
+            ticketQuery = ticketQuery.Where(
+                t => t.Project.ProjectUsersReq.Where(
+                    pur => (pur.UserAssigned.Id.Equals(Guid.Parse(userId)) ||
+                    pur.Sender.Id.Equals(Guid.Parse(userId))) && pur.Accepted).ToList().Count > 0
+            );
+
+            //p => p.ProjectUsersReq.Where(pur => pur.UserAssigned.Id.Equals(Guid.Parse(id)) || pur.Sender.Id.Equals(Guid.Parse(id))).ToList().Count > 0
+
+
+            if (filterAndOrderQuery != null && filterAndOrderQuery.Filters != null)
+            {
+                Console.WriteLine("recognised the filters");
+                if (filterAndOrderQuery.Filters.Count() > 0) 
+                {
+                    ticketQuery = ticketQuery.Where(t => t.Title.Contains(filterAndOrderQuery.Filters.First().Value));
+                }
+
+                ticketQuery = ticketQuery.OrderBy(t => t.Title);
+            }
+
+            var tickets = ticketQuery.Page(num, size).Include(t => t.Status).ToList();
+
+
+            res.Success = true;
+            res.EntitiesDTO = _mapper.Map<ICollection<Ticket>, ICollection<TicketAbbreviatedDTO>>(tickets);
+            return res;
         }
 
         public FindAllResponse<TicketAbbreviatedDTO> GetAll()
@@ -85,7 +120,7 @@ namespace BugTracker.services.ticket
         }
 
 
-        public CreateResponse<TicketDTO> Create(CreateTicketRequest req)
+        public CreateResponse<TicketDTO> Create(Guid id, CreateTicketRequest req)
         {
             var res = new CreateResponse<TicketDTO>();
 
@@ -97,7 +132,7 @@ namespace BugTracker.services.ticket
                     res.ReturnErrorResponseWith("Specified project doesn't exist");
             }
 
-            var user = _userRepository.FindById(req.ReporterId);
+            var user = _userRepository.FindById(id);
 
             if (user == null)
             {
@@ -132,6 +167,9 @@ namespace BugTracker.services.ticket
             ticket.Project = project;
             ticket.Status = ticketStatus;
             ticket.Created = DateTime.Now;
+            ticket.Type = ticketType;
+
+            Console.WriteLine(ticket);
 
             ticket.Validate();
 
@@ -160,7 +198,7 @@ namespace BugTracker.services.ticket
             return res;
         }
 
-        public DeleteResponse Delete(Guid id)
+        public DeleteResponse Delete(Guid userId, Guid id)
         {
             var res = new DeleteResponse();
 
@@ -188,7 +226,7 @@ namespace BugTracker.services.ticket
             return res;
         }
 
-        public UpdateResponse<TicketDTO> Update(Guid id, UpdateTicketRequest req)
+        public UpdateResponse<TicketDTO> Update(Guid id, Guid userId, UpdateTicketRequest req)
         {
             var res = new UpdateResponse<TicketDTO>();
 
@@ -201,25 +239,20 @@ namespace BugTracker.services.ticket
                 return (UpdateResponse<TicketDTO>)res.ReturnErrorResponseWith("Ticket not found");
             }
 
-            var user = _userRepository.FindById(req.UserId);
+            if (ticket.Project.ProjectUsersReq.Where(
+                    pur => pur.UserAssigned.Id.Equals(userId) ||
+                    pur.Sender.Id.Equals(userId)).ToList().Count <= 0)
+            {
+                return (UpdateResponse<TicketDTO>)
+                    res.ReturnErrorResponseWith("You can cnahge only tickets on projects that you are working on!");
+            }
+
+            var user = _userRepository.FindById(userId);
 
             if (user == null)
             {
                 return (UpdateResponse<TicketDTO>)
                             res.ReturnErrorResponseWith("User not found");
-            }
-
-            var project = _projectRepository.FindById(req.ProjectId);
-
-            if (project == null)
-            {
-                return (UpdateResponse<TicketDTO>)
-                            res.ReturnErrorResponseWith("Project not found");
-            }
-
-            if (!ticket.Project.Id.Equals(project.Id)) {
-                return (UpdateResponse<TicketDTO>)
-                            res.ReturnErrorResponseWith("Can't change project for the ticket");
             }
 
             var status = _ticketStatusRepository.FindById(req.StatusId);
@@ -265,7 +298,7 @@ namespace BugTracker.services.ticket
                 _ticketHistoryRepository.Save(history);
             }
 
-            _ticketRepository.Save(ticket);
+            _ticketRepository.Update(ticket);
 
             try
             {

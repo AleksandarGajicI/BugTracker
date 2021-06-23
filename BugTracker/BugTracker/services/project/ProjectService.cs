@@ -32,7 +32,7 @@ namespace BugTracker.services.project
         public ProjectService(IProjectRepository projectRepository,
                                 IUserRepository userRepository,
                                 IRoleRepository roleRepository,
-                                IUnitOfWork uow , 
+                                IUnitOfWork uow,
                                 IMapper mapper)
         {
             _projectRepository = projectRepository;
@@ -44,22 +44,24 @@ namespace BugTracker.services.project
 
         }
 
-        public CreateResponse<ProjectDTO> Create(CreateProjectRequest req)
+        public CreateResponse<ProjectDTO> Create(string id, CreateProjectRequest req)
         {
             var res = new CreateResponse<ProjectDTO>();
 
-            var user = _userRepository.FindById(req.OwnerId);
+            var user = _userRepository.FindById(Guid.Parse(id));
+
+            Console.WriteLine(user);
 
             if (user == null)
             {
-                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith("User not found.");
+                return (CreateResponse<ProjectDTO>)res.ReturnErrorResponseWith("User not found.");
             }
 
             var role = _roleRepository.FindRoleByName("PROJECT_MANAGER");
 
             if (role == null)
             {
-                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith("Error ocurred during asigning roles");
+                return (CreateResponse<ProjectDTO>)res.ReturnErrorResponseWith("Error ocurred during asigning roles");
             }
 
             var project = _projectDomainService.CreateProject(user,
@@ -74,7 +76,7 @@ namespace BugTracker.services.project
 
             if (project.GetBrokenRules().Count > 0)
             {
-                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWithMultiple(project.GetBrokenRules());
+                return (CreateResponse<ProjectDTO>)res.ReturnErrorResponseWithMultiple(project.GetBrokenRules());
             }
 
             _projectRepository.Save(project);
@@ -85,7 +87,7 @@ namespace BugTracker.services.project
             }
             catch (Exception ex)
             {
-                return (CreateResponse<ProjectDTO>) res.ReturnErrorResponseWith(ex.Message);
+                return (CreateResponse<ProjectDTO>)res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.Success = true;
@@ -93,7 +95,7 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public DeleteResponse Delete(Guid id)
+        public DeleteResponse Delete(string userId, Guid id)
         {
             var res = new DeleteResponse();
 
@@ -101,7 +103,15 @@ namespace BugTracker.services.project
 
             if (project == null)
             {
-                return (DeleteResponse) res.ReturnErrorResponseWith("Project not found.");
+                return (DeleteResponse)res.ReturnErrorResponseWith("Project not found.");
+            }
+
+            var owners = project.ProjectUsersReq.Where(pur => pur.Role.RoleName == "PROJECT_MANAGER").ToList();
+
+            if (owners.Find(pur => pur.Sender.Id.Equals(Guid.Parse(userId)) ||
+                             pur.UserAssigned.Id.Equals(Guid.Parse(userId))) == null) 
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith("Only project manager can delete projects!");
             }
 
             _projectRepository.Delete(project);
@@ -112,7 +122,7 @@ namespace BugTracker.services.project
             }
             catch (Exception ex)
             {
-                return (DeleteResponse) res.ReturnErrorResponseWith(ex.Message);
+                return (DeleteResponse)res.ReturnErrorResponseWith(ex.Message);
             }
 
             res.Success = true;
@@ -120,12 +130,19 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public FindAllResponse<ProjectAbbreviatedDTO> FindAll()
+        public FindAllResponse<ProjectAbbreviatedDTO> FindAll(Guid id)
         {
             var res = new FindAllResponse<ProjectAbbreviatedDTO>();
-            var projects = _projectRepository.FindAll().ToList();
-            res.FoundEntitiesDTO = 
-                _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projects);
+
+            var projectsQuery = _projectRepository.GetBasicQuery();
+
+            projectsQuery = projectsQuery.Where(
+                p => p.ProjectUsersReq.Where(pur => pur.UserAssigned.Id.Equals(id) ||
+                pur.Sender.Id.Equals(id)).ToList().Count > 0
+            );
+
+            res.FoundEntitiesDTO =
+                _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projectsQuery.ToList());
             res.Success = true;
             return res;
 
@@ -138,7 +155,7 @@ namespace BugTracker.services.project
             var project = _projectRepository.FindById(id);
             if (project is null)
             {
-                return (FindByIdResponse<ProjectDTO>) res.ReturnErrorResponseWith("Project not found");
+                return (FindByIdResponse<ProjectDTO>)res.ReturnErrorResponseWith("Project not found");
             }
 
             res.EntityDTO = _mapper.Map<Project, ProjectDTO>(project);
@@ -151,10 +168,11 @@ namespace BugTracker.services.project
             var res = new PagedResponse<ProjectAbbreviatedDTO>();
             var query = _projectRepository.GetBasicQuery();
 
-            foreach (var option in req.Filters)
-            {
-                //query.ApplyFilterOption(option.Option, option.Value);
-            }
+
+            //foreach (var option in req.Filters)
+            //{
+            //    query.ApplyFilterOption(option.Option, option.Value);
+            //}
 
             query.ApplySortingOptions(req.SortingOption)
                 .Page(req.PageNum, req.PageSize);
@@ -175,7 +193,7 @@ namespace BugTracker.services.project
             return res;
         }
 
-        public PagedResponse<ProjectAbbreviatedDTO> FindPage(PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder)
+        public PagedResponse<ProjectAbbreviatedDTO> FindPage(string id, PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder)
         {
             var res = new PagedResponse<ProjectAbbreviatedDTO>();
 
@@ -184,6 +202,12 @@ namespace BugTracker.services.project
 
             var projectsQuery = _projectRepository.GetBasicQuery();
             Console.WriteLine(filterAndOrder.Filters is null);
+
+            projectsQuery = projectsQuery.Where(
+                p => p.ProjectUsersReq.Where(pur => (pur.UserAssigned.Id.Equals(Guid.Parse(id)) ||
+                                             pur.Sender.Id.Equals(Guid.Parse(id))) && 
+                                             pur.Accepted).ToList().Count > 0);
+
 
             if (filterAndOrder != null && filterAndOrder.Filters != null)
             {
@@ -198,14 +222,14 @@ namespace BugTracker.services.project
                                 .ApplySortingOptions(filterAndOrder.OrderBy.ConvertTStringToProjectOrderOption());
             }
 
-            var projects =  projectsQuery.Page(num, size).ToList();
+            var projects = projectsQuery.Page(num, size).ToList();
 
             res.Success = true;
             res.EntitiesDTO = _mapper.Map<ICollection<Project>, ICollection<ProjectAbbreviatedDTO>>(projects);
             return res;
         }
 
-        public UpdateResponse<ProjectDTO> Update(Guid id, UpdateProjectRequest req)
+        public UpdateResponse<ProjectDTO> Update(string userId, Guid id, UpdateProjectRequest req)
         {
             var res = new UpdateResponse<ProjectDTO>();
 
@@ -218,7 +242,9 @@ namespace BugTracker.services.project
 
             var owners = project.ProjectUsersReq.Where(pur => pur.Role.RoleName == "PROJECT_MANAGER").ToList();
 
-            if (owners.Find(pur => pur.Id == req.OwnerId) == null)
+
+            if (owners.Find(pur => pur.Sender.Id.Equals(Guid.Parse(userId)) || 
+                            pur.UserAssigned.Id.Equals(Guid.Parse(userId))) == null)
             {
                 return (UpdateResponse<ProjectDTO>)res.ReturnErrorResponseWith("Only project managers can update projects!");
             }

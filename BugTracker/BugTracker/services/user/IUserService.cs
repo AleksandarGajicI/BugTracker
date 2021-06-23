@@ -1,4 +1,5 @@
-﻿using BugTracker.contracts.requests.user;
+﻿using BugTracker.contracts.requests.filterAndOrdering;
+using BugTracker.contracts.requests.user;
 using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
@@ -18,6 +19,8 @@ namespace BugTracker.services.user
         public LoginResponse Login(LoginRequest req);
 
         public DeleteResponse Delete(DeleteRequest req, string userId);
+
+        public PagedResponse<UserDTO> GetPage(string userId, PagedQuery pageQuery, FilterAndOrderQuery filterAndOrderQuery);
 
     }
 }

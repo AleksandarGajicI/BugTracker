@@ -2,6 +2,7 @@ import { Button, Grid, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router"
 import Actions from "./actions/Actions"
+import { HeadersBuilder } from "./actions/HeadersBuilder"
 import Layout from "./Layout"
 import Loading from "./Loading"
 import { ProjectDTO } from "./models/dtos/ProjectDTO"
@@ -27,15 +28,21 @@ function ProjectPage() {
     const [project, setProject] = useState<ProjectDTO>(initial)
     const [tickets, setTickets] = useState<TicketAbbrevDTO[]>([])
     const history = useHistory()
+    const headerBuilder = new HeadersBuilder()
 
     useEffect(() => {
         setLoading(true)
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
 
-        Actions.ProjectActions.getById(id)
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+        Actions.ProjectActions.getById(id, headerBuilder.getHeaders())
         .then(data => {
             setProject(data)
             console.log(data)
-            Actions.TicketActions.getForProject(data.id)
+            Actions.TicketActions.getForProject(data.id, headerBuilder.getHeaders())
             .then(data => {
                 console.log(data)
                 setTickets(data)
@@ -149,7 +156,7 @@ function ProjectPage() {
                      item
                      xs={12}
                      md={6}
-                     style={{backgroundColor: "#456999", padding: "1em"}}
+                     style={{ padding: "1em"}}
 
                     >
                         <UsersOnProjectTable users={project!.usersOnProject}/>
@@ -158,7 +165,7 @@ function ProjectPage() {
                      item
                      xs={12}
                      md={6}
-                     style={{backgroundColor: "#456999", padding: "1em"}}
+                     style={{ padding: "1em"}}
                     >
                         <TicketForProjectTable tickets={tickets}/>
                     </Grid>

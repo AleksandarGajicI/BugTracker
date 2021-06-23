@@ -6,6 +6,7 @@ using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.project;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace BugTracker.Controllers
 {
@@ -25,7 +26,9 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.GetAll)]
         public IActionResult GetProjects()
         {
-            var res = _projectService.FindAll();
+            var id = HttpContext.User.Claims.Single(x => x.Type == "Id").Value;
+
+            var res = _projectService.FindAll(Guid.Parse(id));
             return Ok(res);
         }
 
@@ -46,7 +49,9 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.Create)]
         public IActionResult AddProject([FromBody] CreateProjectRequest project)
         {
-            var res = _projectService.Create(project);
+            var id = HttpContext.User.Claims.Single(x => x.Type == "Id").Value;
+
+            var res = _projectService.Create(id, project);
 
             if (!res.Success)
             {
@@ -60,7 +65,9 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.Update)]
         public IActionResult UpdateProject(Guid id, [FromBody] UpdateProjectRequest req)
         {
-                var res = _projectService.Update(id, req);
+            var userId = HttpContext.User.Claims.Single(x => x.Type == "Id").Value;
+
+            var res = _projectService.Update(userId, id, req);
 
             if (!res.Success)
             {
@@ -73,7 +80,9 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.Delete)]
         public IActionResult DeleteProject(Guid id)
         {
-            var res = _projectService.Delete(id);
+            var userId = HttpContext.User.Claims.Single(x => x.Type == "Id").Value;
+
+            var res = _projectService.Delete(userId, id);
 
             if (!res.Success)
             {
@@ -86,7 +95,14 @@ namespace BugTracker.Controllers
         [Route(ApiRoutes.Projects.GetPage)]
         public IActionResult GetPage([FromQuery] PagedQuery pageQuery, [FromQuery] FilterAndOrderQuery filterAndOrderQuery)
         {
-            var res = _projectService.FindPage(pageQuery, filterAndOrderQuery);
+
+            var httpUser = HttpContext.User;
+
+            var claim = httpUser.Claims.Single(x => x.Type == "Id");
+
+            var id = claim.Value;
+
+            var res = _projectService.FindPage(id, pageQuery, filterAndOrderQuery);
 
             var pageNum = (int)pageQuery.PageNum;
             var pageSize = (int)pageQuery.PageSize;

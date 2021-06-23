@@ -41,7 +41,7 @@ namespace BugTracker.services.projectUserReq
             _mapper = mapper;
         }
 
-        public CreateResponse<ProjectUserRequestDTO> Create(CreateProjectUserReqRequest req)
+        public CreateResponse<ProjectUserRequestDTO> Create(Guid id, CreateProjectUserReqRequest req)
         {
             var res = new CreateResponse<ProjectUserRequestDTO>();
 
@@ -61,7 +61,7 @@ namespace BugTracker.services.projectUserReq
                             res.ReturnErrorResponseWith("Project not found.");
             }
 
-            var sender = _userRepository.FindById(req.SenderId);
+            var sender = _userRepository.FindById(id);
 
             if (sender == null)
             {
@@ -80,7 +80,7 @@ namespace BugTracker.services.projectUserReq
             var projectManagers = project.ProjectUsersReq
                         .Where(pur => pur.Accepted == true && pur.Role.RoleName == "PROJECT_MANAGER").ToList();
 
-            if (projectManagers.Find(pur => pur.UserAssigned.Id == req.SenderId) == null)
+            if (projectManagers.Find(pur => pur.UserAssigned.Id == id) == null)
             {
                 return (CreateResponse<ProjectUserRequestDTO>)
                             res.ReturnErrorResponseWith("User must be project manager to send requests.");
@@ -128,15 +128,20 @@ namespace BugTracker.services.projectUserReq
             return res;
         }
 
-        public DeleteResponse Delete(DeleteRequest req)
+        public DeleteResponse Delete(Guid userId, Guid id)
         {
             var res = new DeleteResponse();
 
-            var pur = _projectUserReqRepository.FindById(req.Id);
+            var pur = _projectUserReqRepository.FindById(id);
 
             if (pur == null)
             {
                 return (DeleteResponse)res.ReturnErrorResponseWith("Specified request not found");
+            }
+
+            if (!pur.Sender.Id.Equals(userId)) 
+            {
+                return (DeleteResponse)res.ReturnErrorResponseWith("You can delete only requests that you sent!");
             }
 
             _projectUserReqRepository.Delete(pur);
@@ -151,23 +156,35 @@ namespace BugTracker.services.projectUserReq
             }
 
             res.Success = true;
-            res.IdDeleted = req.Id;
+            res.IdDeleted = id;
             return res;
         }
 
-        public FindAllResponse<ProjectUserRequestDTO> GetAll()
+        public FindAllResponse<ProjectUserRequestDTO> GetAll(Guid id)
         {
             var res = new FindAllResponse<ProjectUserRequestDTO>();
 
-            var requests = _projectUserReqRepository.FindAll();
+            var requests = _projectUserReqRepository.FindReceivedReqFor(id);
 
             res.FoundEntitiesDTO = _mapper.Map<ICollection<ProjectUserReq>, 
-                                                ICollection<ProjectUserRequestDTO>>(requests.ToList());
+                                                ICollection<ProjectUserRequestDTO>>(requests);
             res.Success = true;
             return res;
         }
 
-        public ResponseBase ReplyWith(ProjectUserReplyRequest req)
+        public FindAllResponse<ProjectUserRequestDTO> GetAllSentReq(Guid id)
+        {
+            var res = new FindAllResponse<ProjectUserRequestDTO>();
+
+            var requests = _projectUserReqRepository.FindSentReqFor(id);
+
+            res.FoundEntitiesDTO = _mapper.Map<ICollection<ProjectUserReq>,
+                                                ICollection<ProjectUserRequestDTO>>(requests);
+            res.Success = true;
+            return res;
+        }
+
+        public ResponseBase ReplyWith(Guid userId, ProjectUserReplyRequest req)
         {
             var res = new ResponseBase();
 
@@ -178,17 +195,21 @@ namespace BugTracker.services.projectUserReq
                 return res.ReturnErrorResponseWith("Specified request for project not found.");
             }
 
-            if (pur.UserAssigned.Id != req.UserAssignedId)
+            if (!pur.UserAssigned.Id.Equals(userId))
             {
                 return res.ReturnErrorResponseWith("Request is not yours.");
             }
 
-            if (pur.Accepted == req.IsAccepted)
+            if (req.IsAccepted)
             {
-                return res.ReturnErrorResponseWith("Bad request.");
+                //update
+                pur.Accepted = req.IsAccepted;
+                _projectUserReqRepository.Update(pur);
             }
-
-            pur.Accepted = req.IsAccepted;
+            else
+            {
+                _projectUserReqRepository.Delete(pur);
+            }
 
             pur.Validate();
 
@@ -196,8 +217,6 @@ namespace BugTracker.services.projectUserReq
             {
                 return res.ReturnErrorResponseWithMultiple(pur.GetBrokenRules());
             }
-
-            _projectUserReqRepository.Update(pur);
 
             try 
             {

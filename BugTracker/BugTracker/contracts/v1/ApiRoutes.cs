@@ -15,12 +15,13 @@ namespace BugTracker.contracts
 
         public static class Users
         {
-            public const string GetAll = Base + "/users";
+            public const string GetAll = Base + "/users/all";
             public const string GetById = Base + "/users/{id}";
             public const string Register = Base + "/register";
             public const string Update = Base + "/users";
             public const string Delete = Base + "/users";
             public const string Login = Base + "/users/login";
+            public const string Page = Base + "/users";
         }
 
         public static class Roles
@@ -42,11 +43,12 @@ namespace BugTracker.contracts
         public static class ProjectUserReq
         {
             public const string GetAll = Base + "/requests";
+            public const string GetAllSent = Base + "/requests/sent";
             public const string GetById = Base + "/requests/id";
             public const string Update = Base + "/requests";
-            public const string Delete = Base + "/requests";
+            public const string Delete = Base + "/requests/{id}";
             public const string Create = Base + "/requests";
-            public const string Reply = Base + "/requests/Reply";
+            public const string Reply = Base + "/requests/reply";
 
         }
 
@@ -58,6 +60,7 @@ namespace BugTracker.contracts
         public static class Tickets
         {
             public const string GetAll = Base + "/tickets";
+            public const string Page = Base + "/tickets/page";
             public const string GetAllForProject = Base + "/tickets/projects/{id}";
             public const string GetById = Base + "/tickets/{id}";
             public const string Update = Base + "/tickets/{id}";
@@ -75,6 +78,7 @@ namespace BugTracker.contracts
         public static class Comments
         {
             public const string GetAllForTicket = Base + "/comments/{id}";
+            public const string GetPageForTicket = Base + "/comments/page/{id}";
             public const string Delete = Base + "/comments/{id}";
             public const string Create = Base + "/comments";
 

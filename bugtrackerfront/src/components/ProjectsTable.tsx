@@ -6,6 +6,7 @@ import Actions from "./actions/Actions";
 import { useHistory } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
 import { ParamsBuilder } from "./actions/ParamsBuilder";
+import { HeadersBuilder } from "./actions/HeadersBuilder";
 
 
 function ProjectTable() {
@@ -14,10 +15,15 @@ function ProjectTable() {
     const history = useHistory()
     const [loading, setLoading] = useState(false)
     const paramsBuilder = new ParamsBuilder()
+    const headerBuilder = new HeadersBuilder()
     const [pageNum, setPageNum] = useState<number>(1)
 
     useEffect(() => {
-        setLoading(true)
+        const token = localStorage.getItem('token')
+        console.log(token)
+        if(!token) {
+            history.push("/")
+        }
         fetchPage(1)
     }, [])
 
@@ -28,7 +34,13 @@ function ProjectTable() {
         paramsBuilder
         .addParameter("PageSize", 3)
         .addParameter("PageNum", pageNum)
-        Actions.ProjectActions.page(paramsBuilder.makeUrlSearchParams())
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem('token')}`)
+
+        Actions.ProjectActions.page(
+            paramsBuilder.makeUrlSearchParams(), 
+            headerBuilder.getHeaders()
+        )
         .then(projects => {
             console.log(projects)
             setProjects(projects)
@@ -57,7 +69,10 @@ function ProjectTable() {
         const confirmed = window.confirm("Are you sure you want to delete this?")
 
         if(confirmed) {
-            Actions.ProjectActions.delete(id).then(response => {
+            headerBuilder.resetHeaders()
+            .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+            Actions.ProjectActions.delete(id, headerBuilder.getHeaders()).then(response => {
                 console.log(response)
             })
         }
@@ -102,7 +117,7 @@ function ProjectTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {projects.map((project: Project) => {
+                    {projects.length > 0 && projects.map((project: Project) => {
                         return (
                             <TableRow 
                             hover 
@@ -130,6 +145,17 @@ function ProjectTable() {
                                 </TableCell>
                             </TableRow>);
                     })}
+                    {projects.length <= 0 &&
+                        <TableRow>
+                            <TableCell 
+                            colSpan={4} 
+                            align="center"
+                            style={{color: "#E20B0B", fontSize: "1.2em"}}
+                            >
+                                You have no projects
+                            </TableCell>
+                        </TableRow>
+                    }
                 </TableBody>
                 <TableFooter>
                     <TableRow>

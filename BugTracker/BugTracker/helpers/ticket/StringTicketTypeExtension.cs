@@ -13,11 +13,11 @@ namespace BugTracker.helpers.ticket
             
             switch (ticketType.ToLower())
             {
-                case "bugerror":
+                case "buge_rror":
                     return TicketType.BUG_ERROR;
-                case "featurerequest":
+                case "feature_request":
                     return TicketType.FEATURE_REQUEST;
-                case "documentrequest":
+                case "document_request":
                     return TicketType.DOCUMENT_REQUEST;
                 case "other":
                     return TicketType.OTHER;

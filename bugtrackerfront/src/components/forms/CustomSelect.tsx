@@ -1,5 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useStyles from "../style/MainStyle"
 
 interface Props {
@@ -9,7 +9,8 @@ interface Props {
         id: string,
         name: string
     }[],
-    onChange: (e: {target: {name: string, value: string}}) => void
+    onChange: (e: {target: {name: string, value: string}}) => void,
+    value?: string
 }
 
 function CustomSelect(props: Props) {
@@ -24,6 +25,12 @@ function CustomSelect(props: Props) {
         }
     }
 
+    useEffect(() => {
+        if(props.value) {
+            console.log(props.value)
+            setValue(props.value)
+        }
+    }, []) 
     return (
         <FormControl
         variant="outlined"

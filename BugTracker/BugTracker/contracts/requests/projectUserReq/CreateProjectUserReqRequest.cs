@@ -7,7 +7,6 @@ namespace BugTracker.contracts.requests.projectUserReq
 {
     public class CreateProjectUserReqRequest
     {
-        public Guid SenderId { get; set; }
         public Guid UserAssignedId { get; set; }
 
         public Guid ProjectId { get; set; }

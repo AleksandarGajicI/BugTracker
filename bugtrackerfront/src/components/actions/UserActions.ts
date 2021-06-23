@@ -14,7 +14,9 @@ const UserActions = {
   getUserFromToken: () => Requests.get<UserNoToken>("/user/token"),
   login: (req: LoginRequest) =>
     Requests.login<LoginResponse>("/users/login", req),
-  all: () => Requests.get<UserDTO[]>(route),
+  all: (headers?: any) => Requests.get<UserDTO[]>(route + "/all", headers),
+  page: (params: URLSearchParams, headers?: any) =>
+    Requests.getPage<UserDTO[]>(route, params, headers),
 };
 
 export default UserActions;

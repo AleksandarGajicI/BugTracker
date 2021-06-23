@@ -3,29 +3,65 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Actions from "./actions/Actions";
+import { HeadersBuilder } from "./actions/HeadersBuilder";
+import { ParamsBuilder } from "./actions/ParamsBuilder";
 import Loading from "./Loading";
 import { TicketAbbrevDTO } from "./models/dtos/TicketAbbrevDTO";
 import Pagination from "./Pagination";
 
 interface Props {
-    withPagination: boolean
+    withPagination: boolean,
 }
 
 function TicketsTable(props: Props) {
 
     const [tickets, setTickets] = useState<TicketAbbrevDTO[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [pageNum, setPageNum] = useState<number>(1)
+    const [searchText, setSearchText] = useState<string>("")
+    const headerBuilder = new HeadersBuilder()
+    const paramsBuilder = new ParamsBuilder()
     const history = useHistory()
 
     useEffect(() => {
-        setLoading(true)
-        Actions.TicketActions.all()
-        .then(data => {
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
 
+        setLoading(true)
+
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+        paramsBuilder
+        .resetFilters()
+        .resetParameters()
+        .addParameter("PageSize", 3)
+        .addParameter("PageNum", pageNum)
+
+        if(searchText !== "") {
+            paramsBuilder.addFilter("title", {property: "title", value: searchText})
+        }
+
+        Actions.TicketActions.page(paramsBuilder.makeUrlSearchParams(), headerBuilder.getHeaders())
+        .then(data => {
+            console.log(data)
             setTickets(data)
             setLoading(false)
         })
-    }, [])
+    }, [searchText, pageNum])
+
+    function nextClicked() {
+        if(tickets.length > 0) {
+            setPageNum(pageNum + 1)
+        }
+    }
+
+    function prevClicked() {
+        if(pageNum > 1) {
+            setPageNum(pageNum - 1)
+        }
+    }
 
     if(loading) {
         return (
@@ -38,6 +74,14 @@ function TicketsTable(props: Props) {
 
         history.push("tickets/" + id)
 
+    }
+
+    function handleInputChange(e: any) {
+        if(e.key === "Enter") {
+            console.log(e.target.value)
+            setSearchText(e.target.value)
+            console.log(searchText)
+        }
     }
 
     return (
@@ -62,6 +106,7 @@ function TicketsTable(props: Props) {
                                 fullWidth
                                 margin="normal"
                                 variant="outlined"
+                                onKeyDown={(e) => handleInputChange(e)}
                                 />
                             </TableCell>
                         </TableRow>
@@ -72,7 +117,7 @@ function TicketsTable(props: Props) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {tickets.map((ticket) => {
+                        {tickets.length > 0 && tickets.map((ticket) => {
                             return (
                                 <TableRow 
                                 hover 
@@ -87,11 +132,18 @@ function TicketsTable(props: Props) {
                                 </TableRow>
                             )
                         })}
+                        {tickets.length <= 0 && 
+                            <TableRow>
+                                <TableCell colSpan={4}
+                                align="center"
+                                style={{color: "#E20B0B", fontSize: "1.2em"}}>No tickets</TableCell>
+                            </TableRow>
+                        }
                     </TableBody>
                     {props.withPagination && <TableFooter>
                         <TableRow>
                             <TableCell colSpan={6}>
-                                <Pagination pageNum={1} onPrevClick={() => console.log("prev")} onNextClick={() => console.log("next")}/>
+                                <Pagination pageNum={1} onPrevClick={() => prevClicked()} onNextClick={() => nextClicked()}/>
                             </TableCell>
                         </TableRow>   
                     </TableFooter>}

@@ -14,8 +14,5 @@ namespace BugTracker.contracts.requests.ticket
         public string Type { get; set; }
 
         public Guid StatusId { get; set; }
-        public Guid ProjectId { get; set; }
-
-        public Guid UserId { get; set; }
     }
 }

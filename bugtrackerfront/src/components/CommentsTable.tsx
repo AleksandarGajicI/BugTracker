@@ -1,32 +1,22 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from "@material-ui/core";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
+import Actions from "./actions/Actions";
+import { HeadersBuilder } from "./actions/HeadersBuilder";
 import { CommentDTO } from "./models/dtos/CommentDTO";
 import Pagination from "./Pagination";
+interface Props {
+    comments: CommentDTO[],
+    searchText: string,
+    deleteComment: (id: string) => void
+}
 
-const commenties: CommentDTO[] = [
-    {
-        id: "1",
-        message: "comment 1",
-        commenter: "Commenter 1",
-        created: "10.10.2020"
-    },
-    {
-        id: "2",
-        message: "comment 2",
-        commenter: "Commenter 2",
-        created: "20.20.2020"
-    }
-]
-
-function CommentsTable() {
-
-    const [comments, setComments] = useState<CommentDTO[]>([])
-
-    useEffect(() => {
-        setComments(commenties)
-    })
-
+function CommentsTable(props: Props) {
+    const searchText = useRef(props.searchText)
+    const [pageNum, setPageNum] = useState<number>(1)
+    const headerBuilder = new HeadersBuilder()
+    const history = useHistory()
+    
     function onPaginationClicked(pageNum: number) {
         alert(pageNum)
     }
@@ -35,7 +25,25 @@ function CommentsTable() {
         const confirmed = window.confirm(`Are you sure you want to delete ${id}?`)
 
         if(confirmed) {
-            alert("deleted")
+            headerBuilder.resetHeaders()
+            .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+            Actions.CommentActions.delete(id, headerBuilder.getHeaders())
+            .then(() => {
+                props.comments = props.comments.filter(c => c.id !== id)
+            })
+        }
+    }
+
+    function prevClicked() {
+        if(pageNum > 1) {
+            setPageNum(pageNum - 1)
+        }
+    }
+
+    function nextClicked() {
+        if(props.comments.length > 0) {
+            setPageNum(pageNum + 1)
         }
     }
 
@@ -54,23 +62,23 @@ function CommentsTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {comments.length < 0
+                    {props.comments.length < 0
                     ? <Typography>No Comments</Typography>
-                    : comments.map(comment => {
+                    : props.comments.map(comment => {
                         return (
                             <TableRow 
                             hover 
                             key={comment.id}
                             >
                                 <TableCell component="th" scope="row">
-                                {comment.commenter}
+                                {comment.commenter.userName}
                                 </TableCell>
                                 <TableCell align="center">{comment.message}</TableCell>
                                 <TableCell align="right">{comment.created.toString().split("T")[0]}</TableCell>
                                 <TableCell align="right">
                                     <Button 
                                     color="secondary"
-                                    onClick={() => {onDelete(comment.id)}}
+                                    onClick={() => {props.deleteComment(comment.id)}}
                                     >
                                         DELETE
                                     </Button>
@@ -83,7 +91,7 @@ function CommentsTable() {
                 <TableFooter>
                     <TableRow>
                         <TableCell colSpan={6}>
-                            <Pagination pageNum={1} onPrevClick={onPaginationClicked} onNextClick={onPaginationClicked}/>
+                            <Pagination pageNum={pageNum} onPrevClick={() => prevClicked()} onNextClick={() => nextClicked()}/>
                         </TableCell>
                     </TableRow>   
                 </TableFooter>

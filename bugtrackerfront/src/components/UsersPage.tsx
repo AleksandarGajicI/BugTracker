@@ -1,6 +1,9 @@
 import { Grid, TextField, Typography } from "@material-ui/core"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useHistory } from "react-router-dom"
 import Actions from "./actions/Actions"
+import { HeadersBuilder } from "./actions/HeadersBuilder"
+import { ParamsBuilder } from "./actions/ParamsBuilder"
 import ProjectUserReqForm from "./forms/ProjectUserReqForm"
 import Layout from "./Layout"
 import { ProjectUserReqCreateDTO } from "./models/dtos/ProjectUserReqCreateDTO"
@@ -10,10 +13,24 @@ import UsersTable from "./UsersTable"
 function UsersPage() {
     const [open, setOpen] = useState<boolean>(false)
     const [userId, setUserId] = useState<string>("")
+    const [searchText, setSearchText] = useState<string>("")
+    const history = useHistory()
+    const headerBuilder = new HeadersBuilder()
+
+
+    useEffect(() => {
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
+        console.log(localStorage.getItem("token"))
+
+    }, [])
 
     function handleInputChange(e: any) {
         if(e.key === "Enter") {
             console.log(e.target.value)
+            setSearchText(e.target.value)
+            console.log(searchText)
         }
     }
 
@@ -34,9 +51,12 @@ function UsersPage() {
         }
         req.userAssignedId = userId
 
-        Actions.ProjectUserReqActions.create(req)
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+        Actions.ProjectUserReqActions.create(req, headerBuilder.getHeaders())
         .then(data => {
-            alert('Successfully sent request to user')
+            history.push("/requests")
         })
     }
 
@@ -84,7 +104,7 @@ function UsersPage() {
                 item
                 xs={12}
                 md={12}>
-                    <UsersTable onClick={onClick}/>
+                    <UsersTable searchText={searchText!} onClick={onClick}/>
                 </Grid>
                 <Grid
                 item

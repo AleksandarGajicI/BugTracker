@@ -2,10 +2,8 @@ import { Button, Grid, InputAdornment, makeStyles, TextField, Typography } from 
 import useStyles from "./style/MainStyle";
 import EmailIcon from '@material-ui/icons/Email';
 import LockIcon from '@material-ui/icons/Lock';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {useForm} from "../components/useForm"
-import { ErrorSharp } from "@material-ui/icons";
-import {useAuth} from '../contexts/AuthContext';
 import Actions from "./actions/Actions"
 import { useState } from "react";
 
@@ -23,11 +21,11 @@ const useCustomStyles = makeStyles((theme) => ({
 }))
 
 function LoginPage() {
-    const {currentUser, setCurrentUser} = useAuth();
     const classes = useStyles()
     const customClasses = useCustomStyles()
     const {values, handleInputChange, errors, setErrors} = useForm(initialFieldValues);
     const [loginError, setLoginError] = useState("");
+    const history = useHistory()
 
     const validate = () => {
         let temp = {
@@ -50,14 +48,7 @@ function LoginPage() {
                 setLoginError("")
                 console.log(res);
                 localStorage.setItem('token', res.token);
-                /*Actions.UserActions.getUserFromToken()
-                .then(res => {
-                    setCurrentUser(res);
-                })
-                .catch(err => {
-                    console.log(err);
-                })*/
-
+                history.push("/projects")
             })
             .catch(err => {
                 setLoginError("Email or password are wrong");

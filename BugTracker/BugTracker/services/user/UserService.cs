@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using BugTracker.helpers;
 using Microsoft.AspNetCore.Http;
+using BugTracker.contracts.requests.filterAndOrdering;
+using System.Linq;
+using BugTracker.helpers.users;
 
 namespace BugTracker.services.user
 {
@@ -169,6 +172,35 @@ namespace BugTracker.services.user
 
             res.EntityDTO = _mapper.Map<User, UserDTO>(user);
             res.Success = true;
+            return res;
+        }
+
+        public PagedResponse<UserDTO> GetPage(string userId, PagedQuery pageQuery, FilterAndOrderQuery filterAndOrderQuery)
+        {
+            var res = new PagedResponse<UserDTO>();
+
+            var size = pageQuery.PageSize == null ? 3 : (int)pageQuery.PageSize;
+            var num = pageQuery.PageNum == null ? 3 : (int)pageQuery.PageNum;
+
+            var usersQuery = _userRepository.GetBasicQuery();
+
+
+            if (filterAndOrderQuery != null && filterAndOrderQuery.Filters != null)
+            {
+                if(filterAndOrderQuery.Filters.Count() > 0 )
+                {
+                    usersQuery = usersQuery
+                    .ApplyFilterOptions(filterAndOrderQuery.Filters.First());
+
+                    usersQuery = usersQuery.OrderBy(u => u.UserName);
+                }
+                
+            }
+
+            var users = usersQuery.Page(num, size).ToList();
+
+            res.Success = true;
+            res.EntitiesDTO = _mapper.Map<ICollection<User>, ICollection<UserDTO>>(users);
             return res;
         }
 

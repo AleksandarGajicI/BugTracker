@@ -15,14 +15,14 @@ export function AuthProvider({children}) {
     useEffect(() => {
         
         //treba da se stavi token u header
-        Actions.UserActions.getUserFromToken()
-        .then(res => {
-            console.log(res);
-            setCurrentUser(res);
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        // Actions.UserActions.getUserFromToken()
+        // .then(res => {
+        //     console.log(res);
+        //     setCurrentUser(res);
+        // })
+        // .catch(err => {
+        //     console.log(err);
+        // })
     }, [])
 
     const value = {

@@ -12,6 +12,7 @@ import CustomCheckbox from "./forms/CustomCheckbox";
 import Actions from "./actions/Actions";
 import { ProjectDTO } from "./models/dtos/ProjectDTO";
 import Project from "./models/Project";
+import { HeadersBuilder } from "./actions/HeadersBuilder";
 
 
 const projectDto: ProjectUpdateDTO = {
@@ -33,6 +34,7 @@ function EditProjectPage() {
     const {values, errors, setErrors, handleInputChange} = useForm(initialValues)
     const {id} = useParams<{id: string}>()
     const history = useHistory()
+    const headerBuilder = new HeadersBuilder()
 
     const validate = () => {
         const temp = {...project};
@@ -49,8 +51,13 @@ function EditProjectPage() {
     }
 
     useEffect(() => {
-        console.log(id)
-        Actions.ProjectActions.getById(id)
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
+
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+        Actions.ProjectActions.getById(id, headerBuilder.getHeaders())
         .then(data => {
             refreshData(data)
         })
@@ -65,6 +72,9 @@ function EditProjectPage() {
     }
 
     function onSubmit() {
+        if(!validate()) {
+            return
+        }
 
         const projectUpdateRequest: ProjectUpdateDTO = {
             ownerId: "8812363d-a71f-4143-7693-08d90b499182",
@@ -76,7 +86,10 @@ function EditProjectPage() {
 
         console.log(projectUpdateRequest)
 
-        Actions.ProjectActions.update(id, projectUpdateRequest)
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+        Actions.ProjectActions.update(id, projectUpdateRequest, headerBuilder.getHeaders())
         .then(data => {
             refreshData(data)
             history.push("/projects")

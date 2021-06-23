@@ -7,6 +7,9 @@ import CustomInput from "./CustomInput";
 import CustomDatePicker from "./CustomDatePicker";
 import { CreateProjectRequest } from "../models/project/CreateProjectRequest";
 import Actions from "../actions/Actions";
+import { HeadersBuilder } from "../actions/HeadersBuilder";
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 const project: Project = {
     id: "",
@@ -20,10 +23,21 @@ const initialValues = {
     currentDate: new Date()
 }
 
+interface Props {
+    afterCreate: () => void
+}
 
-function ProjectForm() {
-    const classes = useStyles();
-    const {values, errors, setErrors, handleInputChange} = useForm(initialValues);
+function ProjectForm(props: Props) {
+    const classes = useStyles()
+    const {values, errors, setErrors, handleInputChange} = useForm(initialValues)
+    const history = useHistory()
+    const headersBuilder = new HeadersBuilder()
+
+    useEffect(() => {
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
+    }, [])
 
     const validate = () => {
         const temp = {...project};
@@ -40,18 +54,24 @@ function ProjectForm() {
     }
 
     function onSubmit() {
+        if(!validate()) {
+            return
+        }
+
         const createRequest: CreateProjectRequest = {
             Name: values.name,
             Description: values.description,
-            Deadline: values.currentDate,
-            OwnerId: "fc4b7091-f294-4428-bc85-6e0ce1351f7d"
+            Deadline: values.currentDate
         }
 
         console.log(createRequest)
+        
+        headersBuilder.addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
 
-        Actions.ProjectActions.create(createRequest)
+        Actions.ProjectActions.create(createRequest, headersBuilder.getHeaders())
         .then(data => {
-            console.log(data)
+            props.afterCreate()
+            
         })
         .catch(error => console.log(error))
     }

@@ -4,6 +4,7 @@ using BugTracker.dto;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using BugTracker.services.role;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -20,6 +21,7 @@ namespace BugTracker.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymousAttribute]
         [Route(ApiRoutes.Roles.GetAll)]
         public IActionResult GetAllRoles()
         {

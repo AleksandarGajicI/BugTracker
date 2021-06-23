@@ -11,7 +11,6 @@ namespace BugTracker.contracts.requests.ticket
         public DateTime Deadline { get; set; }
         public string Description { get; set; }
         public string TicketType { get; set; }
-        public Guid ReporterId { get; set; }
         public Guid ProjectId { get; set; }
 
         public Guid StatusId { get; set; }

@@ -9,6 +9,11 @@ function ProjectsPage() {
     const classes = useStyles();
     const projectFormToggle = useToggle(false);
 
+
+  function afterCreate() {
+    projectFormToggle.toggle()
+  }
+
     return (
         <Layout>
             <Grid
@@ -47,7 +52,7 @@ function ProjectsPage() {
               item
               xs={12}
               >
-                {projectFormToggle.isOpen && <ProjectForm />}
+                {projectFormToggle.isOpen && <ProjectForm afterCreate={afterCreate}/>}
               </Grid>
               <Grid
               item

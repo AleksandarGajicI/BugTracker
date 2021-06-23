@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using BugTracker.auth;
 using System.Text;
 using BugTracker.helpers.dependencyInjection;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+
 namespace BugTracker
 {
     public class Startup
@@ -41,7 +44,14 @@ namespace BugTracker
 
             services.AddCustomCorsPolicy();
 
-            services.AddControllers();
+            services.AddControllers(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder("Bearer").RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            });
+            //.AddNewtonsoftJson(
+            //    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //);
 
             services.AddRepositories();
 

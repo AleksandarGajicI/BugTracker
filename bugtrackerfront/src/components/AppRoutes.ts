@@ -12,16 +12,6 @@ const AppRoutes = [
     component: ProjectsPage,
   },
   {
-    path: "/",
-    sidebarName: "home",
-    component: HomePage,
-  },
-  {
-    path: "/login",
-    sidebarName: "Login",
-    component: LoginPage,
-  },
-  {
     path: "/requests",
     sidebarName: "My requests",
     component: RequestsPage,

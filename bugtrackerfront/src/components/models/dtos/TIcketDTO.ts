@@ -1,3 +1,5 @@
+import { CommentDTO } from "./CommentDTO";
+
 export interface TicketDTO {
   id: string;
   title: string;
@@ -15,4 +17,5 @@ export interface TicketDTO {
     userName: string;
   };
   assignedUsers: string[];
+  recentComments: CommentDTO[];
 }

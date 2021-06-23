@@ -14,16 +14,16 @@ namespace BugTracker.services.project
 {
     public interface IProjectService
     {
-        public CreateResponse<ProjectDTO> Create(CreateProjectRequest req);
+        public CreateResponse<ProjectDTO> Create(string id, CreateProjectRequest req);
 
-        public DeleteResponse Delete(Guid id);
+        public DeleteResponse Delete(string userId, Guid id);
 
-        public FindAllResponse<ProjectAbbreviatedDTO> FindAll();
+        public FindAllResponse<ProjectAbbreviatedDTO> FindAll(Guid id);
 
         public FindByIdResponse<ProjectDTO> FindById(Guid id);
 
-        public UpdateResponse<ProjectDTO> Update(Guid id, UpdateProjectRequest req);
+        public UpdateResponse<ProjectDTO> Update(string userId, Guid id, UpdateProjectRequest req);
 
-        public PagedResponse<ProjectAbbreviatedDTO> FindPage(PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder);
+        public PagedResponse<ProjectAbbreviatedDTO> FindPage(string id, PagedQuery pagedQuery, FilterAndOrderQuery filterAndOrder);
     }
 }

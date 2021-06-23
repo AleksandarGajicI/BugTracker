@@ -48,12 +48,12 @@ function TicketForProjectTable(props: Props) {
                     <TableRow>
                         <TableCell>Title</TableCell>
                         <TableCell align="center">Type</TableCell>
-                        <TableCell align="right">Status</TableCell>
+                        <TableCell align="center">Status</TableCell>
                         <TableCell align="right">Deadline</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {props.tickets.map(ticket => {
+                    {props.tickets.length > 0 && props.tickets.map(ticket => {
                         return(
                             <TableRow 
                             hover 
@@ -87,6 +87,13 @@ function TicketForProjectTable(props: Props) {
                             </TableRow>
                         )
                     })
+                    }
+                    { props.tickets.length <= 0 &&
+                        <TableRow>
+                            <TableCell colSpan={4}
+                            align="center"
+                            style={{color: "#E20B0B", fontSize: "1.2em"}}>No tickets</TableCell>
+                        </TableRow>
                     }
                 </TableBody>
                 <TableFooter>

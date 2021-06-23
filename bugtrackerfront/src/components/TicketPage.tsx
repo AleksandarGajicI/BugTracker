@@ -2,39 +2,137 @@ import { Button, Grid, TextField, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
 import Actions from "./actions/Actions"
+import { HeadersBuilder } from "./actions/HeadersBuilder"
+import { ParamsBuilder } from "./actions/ParamsBuilder"
 import CommentsTable from "./CommentsTable"
 import Layout from "./Layout"
 import Loading from "./Loading"
+import { CommentDTO } from "./models/dtos/CommentDTO"
 import { TicketDTO } from "./models/dtos/TIcketDTO"
 import useStyles from "./style/MainStyle"
 
-const ticket = ""
 
 function TicketPage() {
     const {id} = useParams<{id: string}>()
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
     const [ticket, setTicket] = useState<TicketDTO>()
+    const [searchText, setSearchText] = useState<string>("")
+    const [message, setMessage] = useState<string>("")
+    const [comments, setComments] = useState<CommentDTO[]>([])
     const history = useHistory()
     const classes = useStyles()
+    const headerBuilder = new HeadersBuilder()
+    const paramsBuilder = new ParamsBuilder()
 
     useEffect(() => {
-        setLoading(true)
-        Actions.TicketActions.getById(id)
+        if(!localStorage.getItem("token")) {
+            history.push("/")
+        }
+        console.log("fetching data")
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+        paramsBuilder.resetParameters()
+        .resetFilters()
+        .addParameter("PageSize", 3)
+        .addParameter("PageNum", 1)
+
+        Promise.all([
+            Actions.TicketActions.getById(id, headerBuilder.getHeaders())
         .then(data => {
             console.log(data)
-            setLoading(false)
             setTicket(data)
         })
         .catch(error => {
             console.log("error")
             setLoading(false)
+        }),
+        Actions.CommentActions.getForTicket(id, paramsBuilder.makeUrlSearchParams(), headerBuilder.getHeaders())
+        .then(data => {
+            console.log(data)
+            setComments(data)
         })
+        .catch(error => {
+            console.log(error.message)
+        })
+    ])
+    .then(() => {
+        setLoading(false)
+    })
+    .catch(err => setLoading(false))
+        
     }, [])
 
     if(loading) {
         return (
             <Loading/>
         )
+    }
+
+    function handleInputChange(e: any) {
+        if(e.key === "Enter") {
+            console.log(e.target.value)
+            if(e.target.value !== "") {
+                setSearchText(e.target.value)
+            }
+            
+            
+        }
+    }
+
+    function handleMessageChange(e: any) {
+        console.log(e.target.value)
+        setMessage(e.target.value)
+    }
+
+    function saveComment() {
+        if(message === "") {
+            alert("Message cant be empty!")
+            return
+        }
+        headerBuilder.resetHeaders()
+        .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+        Actions.CommentActions.create({
+            message: message,
+            ticketId: ticket!.id
+        }, headerBuilder.getHeaders())
+        .then(data => {
+            console.log(data)
+            setComments([
+                data,
+                ...comments
+            ])
+            setMessage("")
+        })
+    }
+
+    function deleteComment(id: string) {
+        const confirmed = window.confirm(`Are you sure you want to delete ${id}?`)
+
+        if(confirmed) {
+            headerBuilder.resetHeaders()
+            .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+            Actions.CommentActions.delete(id, headerBuilder.getHeaders())
+            .then(() => {
+                setComments(comments.filter(comment => comment.id !== id))
+            })
+        }
+    }
+
+    function deleteTicket(id: string) {
+        const confirmed = window.confirm(`Are you sure you want to delete this?`)
+
+        if(confirmed) {
+            headerBuilder.resetHeaders()
+            .addHeader("Authorization", `Bearer ${localStorage.getItem("token")}`)
+
+            Actions.TicketActions.delete(id, headerBuilder.getHeaders())
+            .then(() => {
+                history.push("/tickets/")
+            })
+        }
     }
 
     return (
@@ -270,6 +368,7 @@ function TicketPage() {
                             margin="normal"
                             variant="filled"
                             multiline={true}
+                            onKeyDown={(e) => handleMessageChange(e)}
                             />
                         </Grid>
                         <Grid
@@ -278,7 +377,12 @@ function TicketPage() {
                         justify="flex-end"
                         xs={4}
                         >
-                            <Button variant="contained" color="secondary">ADD COMMENT</Button>
+                            <Button 
+                            variant="contained" 
+                            color="secondary"
+                            onClick={() => saveComment()}>
+                                ADD COMMENT
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid
@@ -319,18 +423,31 @@ function TicketPage() {
                                     InputProps={{
                                         className: classes.input
                                     }}
+                                    onKeyDown={(e) => handleInputChange(e)}
                                     />
                                 </Grid>
                             
                             </Grid>
-                            <CommentsTable />
+                            <CommentsTable deleteComment={deleteComment} searchText={searchText} comments={comments} />
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
             <Grid
+            item
             container
-            ></Grid>
+            alignItems="center"
+            justify="center"
+            style={{margin: "3em"}}
+            >
+                <Button 
+                variant="contained"
+                style={{padding: "1em", backgroundColor: "#E70303", color: "#fff"}}
+                onClick={() => deleteTicket(ticket!.id)}
+                >
+                    DELETE THIS TICKET
+                </Button>
+            </Grid>
         </Layout>
     )
 }

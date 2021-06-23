@@ -3,18 +3,16 @@ using BugTracker.dto.ProjectUserReq;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.infrastructure.contracts.responses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BugTracker.services.projectUserReq
 {
     public interface IProjectUserReqService
     {
-        public FindAllResponse<ProjectUserRequestDTO> GetAll();
-        public CreateResponse<ProjectUserRequestDTO> Create(CreateProjectUserReqRequest req);
-        public ResponseBase ReplyWith(ProjectUserReplyRequest req);
+        public FindAllResponse<ProjectUserRequestDTO> GetAll(Guid id);
+        public FindAllResponse<ProjectUserRequestDTO> GetAllSentReq(Guid id);
+        public CreateResponse<ProjectUserRequestDTO> Create(Guid id, CreateProjectUserReqRequest req);
+        public ResponseBase ReplyWith(Guid userId, ProjectUserReplyRequest req);
 
-        public DeleteResponse Delete(DeleteRequest req);
+        public DeleteResponse Delete(Guid userId, Guid id);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BugTracker.contracts;
+using BugTracker.contracts.requests.filterAndOrdering;
 using BugTracker.contracts.requests.user;
 using BugTracker.infrastructure.contracts.requests;
 using BugTracker.services.user;
@@ -49,6 +50,7 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [Route(ApiRoutes.Users.Register)]
+        [AllowAnonymousAttribute]
         public IActionResult Register([FromBody] RegisterUserRequest req)
         {
             var res = _userService.Create(req);
@@ -91,9 +93,28 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [Route(ApiRoutes.Users.Login)]
+        [AllowAnonymousAttribute]
         public IActionResult Login(LoginRequest req)
         {
             var res = _userService.Login(req);
+
+            
+            if (!res.Success)
+            {
+                return BadRequest(res);
+            }
+
+            return Ok(res);
+        }
+
+        [HttpGet]
+        [Route(ApiRoutes.Users.Page)]
+        public IActionResult GetPage([FromQuery] PagedQuery pageQuery, [FromQuery] FilterAndOrderQuery filterAndOrderQuery)
+        {
+            var userId = HttpContext.User.Claims.Single(x => x.Type == "Id").Value;
+
+            var res = _userService.GetPage(userId, pageQuery, filterAndOrderQuery);
+
 
             if (!res.Success)
             {
